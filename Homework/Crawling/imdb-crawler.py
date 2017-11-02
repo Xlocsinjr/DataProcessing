@@ -14,7 +14,6 @@ import errno
 
 import string
 
-# asd
 # To subvert unicode error
 import sys
 reload(sys)
