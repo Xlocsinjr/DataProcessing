@@ -257,22 +257,54 @@ def scrape_movie_page(dom):
         several), actor(s) (semicolon separated if several), rating, number
         of ratings.
     '''
-    # YOUR SCRAPING CODE GOES HERE:
-    #title: by id 'ratingwidget'. by strong.
-    title =
-    # duration = 'b'
-    # genres = 'a; b; c'
-    # directors = 'a; b; c'
-    # writers = 'a'
-    # actors = 'a; b; c'
-    # rating = 'c'
-    # n_ratings = 'd'
+    # Gathers title and duration.
+    title = dom.by_tag("strong")[6].content
+    title = title.rstrip("|")
+    duration = dom.by_tag("time")[0].content
+    duration = duration.strip()
 
+    # Forms string of ';' separated genres.
+    genres = ""
+    genre_iterator = dom.by_class("subtext")[0].by_tag("a")
+    for i in range(len(genre_iterator) - 1):        # - 1 to skip last <a>
+        if i > 0:
+            genres += "; "
+        genres += genre_iterator[i].by_tag("span")[0].content
+
+    # Forms string of ';' separated directors.
+    directors = creditgetter(dom, 0)
+
+    # Forms string of ';' separated writers.
+    writers = creditgetter(dom, 1)
+
+    # Forms string of ';' separated actors.
+    actors = creditgetter(dom, 2)
+
+    # Gathers the rating and the vote count.
+    rating = dom.by_tag("strong")[0].by_tag("span")[0].content
+    n_ratings = dom.by_class("imdbRating")[0].by_tag("a")[0].by_tag("span")[0].content
 
     # Return everything of interest for this movie (all strings as specified
     # in the docstring of this function).
     return title, duration, genres, directors, writers, actors, rating, \
-        n_ratings
+       n_ratings
+
+
+
+def creditgetter(dom, index):
+    '''
+    Function to retrieve items under the credit_summary_item classes.
+    Index = 0 for directors
+    Index = 1 for writers
+    Index = 2 for actors
+    '''
+    items_string = ""
+    iterator = dom.by_class("credit_summary_item")[index].by_class("itemprop")
+    for j in range(len(iterator)):
+        if j > 0:
+            items_string += "; "
+        items_string += iterator[j].content
+    return items_string
 
 
 if __name__ == '__main__':
