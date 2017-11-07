@@ -368,6 +368,8 @@
 20161231,   18
 </textarea>
 
+<canvas id="canvas"></canvas>
+
 
 
 <script>
@@ -388,10 +390,36 @@
     // splits data at the ','
     var line_split = raw_data_split[i].split(",");
 
-    console.log(line_split[0], parseInt(line_split[1]), i, raw_data_split.length);
+    // Turns the dates into javascript dates
+    var date_raw = line_split[0];
+    var date = [date_raw.slice(0, 4), date_raw.slice(4, 6), date_raw.slice(6)]
+      .join("-");
+    date = Date(date);
+
+    // Turns the temperatures into floats with 1 decimal
+    var temp_raw = line_split[1];
+    var temp = parseInt(line_split[1]) * 0.1;
+    temp = Math.round(temp * 10) / 10;
+
+
+    console.log(date, temp, i, raw_data_split.length);
     // Stores the dates and temperature
-    dates[i] = line_split[0];
-    temperature[i] = parseInt(line_split[1]);
+    dates[i] = date;
+    temperature[i] = temp;
   }
+
+  // First test of drawing graph
+  var canvas = document.getElementById("canvas");
+  var ctx = canvas.getContext("2d");
+  ctx.beginPath();
+
+  ctx.moveTo(0, temperature[0]);
+  for (var i = 1; i < 365; i++)
+  {
+    ctx.lineTo(i, temperature[i]);
+  }
+  ctx.stroke();
+
+
 
 </script>
