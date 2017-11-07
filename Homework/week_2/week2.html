@@ -375,18 +375,23 @@
   var raw_data = String(document.getElementById("rawdata").value);
   var raw_data_split = raw_data.split("\n");
 
-  var dates[raw_data_split.length];
-  var temperature[raw_data_split.length];
+  // raw_data_split.length
+  var dates = [];
+  var temperature = [];
 
   // Iterates through the lines to retrieve date and average temperature
-  for (var i = 0; i < raw_data_split.length; i++)
+  for (var i = 0; i < raw_data_split.length - 2; i++)
   {
-    var line = raw_data_split[i]);
-    var line_split = raw_data_split[i].split(",   ");
-    dates[i] = "lol"
-  }
+    // Retrieves a line of data
+    var line = raw_data_split[i];
 
-// STORE DATE IN DATES AND TEMP INTO temperature
-// SPLIT BY ',' AND LSTRIP TEMPERATURES
+    // splits data at the ','
+    var line_split = raw_data_split[i].split(",");
+
+    console.log(line_split[0], parseInt(line_split[1]), i, raw_data_split.length);
+    // Stores the dates and temperature
+    dates[i] = line_split[0];
+    temperature[i] = parseInt(line_split[1]);
+  }
 
 </script>
