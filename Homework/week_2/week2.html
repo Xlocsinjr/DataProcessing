@@ -445,7 +445,7 @@
   context.lineTo(x_offset, -5 * y_scale_factor + y_offset);
   context.stroke();
 
-  // Draws helpful lines through the graph for every 5 degrees celsius
+  // Draws lines through the graph for every 5 degrees celsius
   context.beginPath();
   context.strokeStyle = "gray"
   context.lineWidth = 0.3;
@@ -456,15 +456,17 @@
   }
   context.stroke();
 
-  // Labels Y-axis
+  // Labels Y-axis tick marks
   for (var i = -1; i < 7; i++)
   {
     context.font = '5pt "open sans", sans-serif';
     context.fillText(String(5 * i), x_offset - 10, 5 * i * y_scale_factor + y_offset);
   }
+
+  // Labels Y-axis
   context.fillText("Average temperature (degrees celsius)", x_offset - 20, y_offset - 160);
 
-  // Labels X-axis and adds little tick marks
+  // Labels X-axis tick marks
   context.beginPath();
   for (var i = 0; i < days; i ++)
   {
@@ -487,9 +489,14 @@
   context.strokeStyle = "black";
   context.lineWidth = 0.8;
 
+  // Labels the X-axis
   context.font = '5pt "open sans", sans-serif';
-  context.fillText("Date", x_offset + 340, y_offset + 12)
+  context.fillText("Date", x_offset + 340, y_offset + 12);
   context.stroke();
+
+  // Adds title text
+  context.font = '7pt "open sans", sans-serif';
+  context.fillText("Average temperature in De Bilt", x_offset + 120, y_offset - 160);
 
   console.log(temperature[0])
 
