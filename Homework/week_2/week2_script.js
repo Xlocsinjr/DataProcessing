@@ -42,14 +42,13 @@ for (var i = 0; i < raw_data_split.length; i++)
 
     // Turns the dates into javascript dates
     var date_raw = line_split[1];
-    var date_string = [date_raw.slice(0, 4), date_raw.slice(4, 6), date_raw.slice(6)]
-      .join("-");
-    console.log(date_raw);
+
+    var date_string = [date_raw.slice(0, 4), date_raw.slice(4, 6), date_raw.slice(6)].join("-");
     date = new Date(date_string);
 
     // Turns the temperatures into floats with 1 decimal
-    var temp_raw = line_split[2];
-    var temp = parseInt(line_split[1]) * 0.1;
+
+    var temp = parseInt(line_split[2]) * 0.1;
     temp = Math.round(temp * 10) / 10;
 
     // Stores the dates and temperature
@@ -57,9 +56,6 @@ for (var i = 0; i < raw_data_split.length; i++)
     temperature[data_count] = temp;
     data_count++;
 }
-// console.log(dates);
-// console.log(temperature);
-
 
 // Set canvas and canvas size
 var canvas = document.getElementById("canvas");
