@@ -34,8 +34,6 @@ var data_count = 0;
 // Iterates through the lines to retrieve date and average temperature
 for (var i = 0; i < raw_data_split.length; i++)
 {
-  if (raw_data_split[0] != "#")
-  {
     // Retrieves a line of data
     var line = raw_data_split[i];
 
@@ -43,14 +41,14 @@ for (var i = 0; i < raw_data_split.length; i++)
     var line_split = raw_data_split[i].split(",");
 
     // Turns the dates into javascript dates
-    var date_raw = line_split[0];
+    var date_raw = line_split[1];
     var date_string = [date_raw.slice(0, 4), date_raw.slice(4, 6), date_raw.slice(6)]
       .join("-");
     console.log(date_raw);
     date = new Date(date_string);
 
     // Turns the temperatures into floats with 1 decimal
-    var temp_raw = line_split[1];
+    var temp_raw = line_split[2];
     var temp = parseInt(line_split[1]) * 0.1;
     temp = Math.round(temp * 10) / 10;
 
@@ -58,7 +56,6 @@ for (var i = 0; i < raw_data_split.length; i++)
     dates[data_count] = date;
     temperature[data_count] = temp;
     data_count++;
-  }
 }
 // console.log(dates);
 // console.log(temperature);
