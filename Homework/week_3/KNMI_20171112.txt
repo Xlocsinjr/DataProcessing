@@ -1,0 +1,55 @@
+# BRON: KONINKLIJK NEDERLANDS METEOROLOGISCH INSTITUUT (KNMI)
+# Opmerking: door stationsverplaatsingen en veranderingen in waarneemmethodieken zijn deze tijdreeksen van dagwaarden mogelijk inhomogeen! Dat betekent dat deze reeks van gemeten waarden niet geschikt is voor trendanalyse. Voor studies naar klimaatverandering verwijzen we naar de gehomogeniseerde reeks maandtemperaturen van De Bilt <http://www.knmi.nl/kennis-en-datacentrum/achtergrond/gehomogeniseerde-reeks-maandtemperaturen-de-bilt> of de Centraal Nederland Temperatuur <http://www.knmi.nl/kennis-en-datacentrum/achtergrond/centraal-nederland-temperatuur-cnt>.
+# 
+# 
+# STN      LON(east)   LAT(north)     ALT(m)  NAME
+# 240:         4.790       52.318      -3.30  SCHIPHOL
+# 
+# YYYYMMDD = Datum (YYYY=jaar MM=maand DD=dag); 
+# RH       = Etmaalsom van de neerslag (in 0.1 mm) (-1 voor <0.05 mm); 
+# 
+# STN,YYYYMMDD,   RH
+# 
+  240,20171001,    1
+  240,20171002,    4
+  240,20171003,   29
+  240,20171004,   17
+  240,20171005,  150
+  240,20171006,   56
+  240,20171007,  114
+  240,20171008,   -1
+  240,20171009,   77
+  240,20171010,    3
+  240,20171011,   36
+  240,20171012,    0
+  240,20171013,    0
+  240,20171014,    0
+  240,20171015,    0
+  240,20171016,    0
+  240,20171017,    0
+  240,20171018,    0
+  240,20171019,   23
+  240,20171020,   74
+  240,20171021,   33
+  240,20171022,  107
+  240,20171023,    5
+  240,20171024,    6
+  240,20171025,   -1
+  240,20171026,    0
+  240,20171027,   25
+  240,20171028,   -1
+  240,20171029,   11
+  240,20171030,    1
+  240,20171031,    1
+  240,20171101,   -1
+  240,20171102,   -1
+  240,20171103,    0
+  240,20171104,   28
+  240,20171105,   35
+  240,20171106,    2
+  240,20171107,    0
+  240,20171108,    1
+  240,20171109,   37
+  240,20171110,   16
+  240,20171111,    5
+  240,20171112,   51
