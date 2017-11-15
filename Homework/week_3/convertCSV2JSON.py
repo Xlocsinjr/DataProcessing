@@ -13,7 +13,8 @@ import json
 csvfile = open('KNMI_20171112_reduced.csv', 'r')
 jsonfile = open('Rainsum.json', 'w')
 
-# Iterate through every row
+# Starts jsonfile with opening bracket, then iterate through every row in csv
+jsonfile.write("[")
 for row in csvfile:
     dictionary = {}
 
@@ -31,4 +32,8 @@ for row in csvfile:
 
     # Dumps the dictionary as a row in the json
     json.dump(dictionary, jsonfile)
-    jsonfile.write("\n")
+    jsonfile.write(",")
+
+# Overwrites last "," with a closing bracket
+jsonfile.seek(-1, 1)
+jsonfile.write("]")
