@@ -33,6 +33,7 @@ var xAxis = d3.svg.axis()
 // Defines the y-axis. Placed on the left.
 var yAxis = d3.svg.axis()
     .scale(y)
+    //.tickValues([-0.1, 0, 0.1, 0.2])
     .orient("left");
 
 // From: http://bl.ocks.org/Caged/6476579
@@ -52,11 +53,12 @@ var chart = d3.select(".chart")
 
 chart.call(tip);
 
-// chart.append("text")
-//   .attr("x", barWidth / 2)
-//   .attr("y", function(d) { return y(d.rainfall) - 20; })
-//   .attr("dy", ".75em")
-//   .text(function(d) { return d.rainfall; });
+// Adds a title to the top of the chart
+chart.append("text")
+  .attr("x", width / 2)
+  .attr("y", 20)
+  .style("font", "20px sans-serif")
+  .text("Sum of rainfall measured at Schiphol from october 30 to november 12 in 2017");
 
 // Loads in external data
 d3.json("Rainsum.json", function(error, data) {
@@ -91,19 +93,19 @@ d3.json("Rainsum.json", function(error, data) {
       .on("mouseover", tip.show)
       .on("mouseout", tip.hide);
 
-  // Adds text to the bars displaying the rainfall
-  // bar.append("text")
-  //     .attr("x", barWidth / 2)
-  //     .attr("y", function(d) { return y(d.rainfall) - 20; })
-  //     .attr("dy", ".75em")
-  //     .text(function(d) { return d.rainfall; });
-
 
   // Adds a g element for an X axis
   chart.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
+      .call(xAxis)
+    .append("text")
+      .attr("class", "axisLabel")
+      .attr("x", width)
+      .attr("y", 30)
+      .style("font", "20px sans-serif")
+      .style("text-anchor", "end")
+      .text("Date");
 
   // Adds a g element for a Y axis
   chart.append("g")
@@ -113,6 +115,7 @@ d3.json("Rainsum.json", function(error, data) {
       .attr("transform", "rotate(-90)")
       .attr("y", 6)
       .attr("dy", ".71em")
+      .style("font", "20px sans-serif")
       .style("text-anchor", "end")
       .text("Rainfall (mm)");
 });
