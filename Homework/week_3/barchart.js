@@ -65,7 +65,7 @@ d3.json("Rainsum.json", function(error, data) {
 
   // Defines domain based on the data
   x.domain(data.map(function(d) { return d.date; }));
-  y.domain([0, d3.max(data, function(d) {return d.rainfall;}) + dataOffset]);
+  y.domain([-dataOffset, d3.max(data, function(d) {return d.rainfall;})]);
 
 
   // Width of the bar is defined as width divided by the number of data entries
