@@ -6,6 +6,7 @@
  * Implements a bar chart for the
  ****/
 
+window.onload = function() {
 // Code is heavily based on this tutorial: https://bost.ocks.org/mike/bar/3/
 
 // Sets the margins for the chart and sets the width and height
@@ -119,3 +120,5 @@ d3.json("Rainsum.json", function(error, data) {
       .style("text-anchor", "end")
       .text("Rainfall (mm)");
 });
+
+}
