@@ -1,9 +1,9 @@
 /****
- * week3_script.js
+ * barchart.js
  *
  * Xander Locsin, 10722432
  *
- * Implements a bar chart for the
+ * Implements a bar chart using d3 to create svg elements in barchart.html
  ****/
 
 // Code is heavily based on this tutorial: https://bost.ocks.org/mike/bar/3/
