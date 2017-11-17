@@ -41,27 +41,12 @@ var chart = d3.select(".chart")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-
-
-
-
 // Loads in external data
 d3.json("Rainsum.json", function(error, data) {
 
   // Defines domain based on the data
-  //x.domain(data.map(function(d) { return d.date; }));
+  x.domain(data.map(function(d) { return d.date; }));
   y.domain([0, d3.max(data, function(d) {return d.rainfall;}) + dataOffset]);
-
-  // Adds a g element for an X axis
-  chart.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0,' + height + ')")
-      .call(xAxis);
-
-  // Adds a g element for a Y axis
-  chart.append("g")
-      .attr("class", "y axis")
-      .call(yAxis);
 
 
   // Width of the bar is defined as width divided by the number of data entries
@@ -90,4 +75,15 @@ d3.json("Rainsum.json", function(error, data) {
       .attr("y", function(d) { return y(d.rainfall) - 3; })
       .attr("dy", ".75em")
       .text(function(d) { return d.rainfall; });
+
+  // Adds a g element for an X axis
+  chart.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  // Adds a g element for a Y axis
+  chart.append("g")
+      .attr("class", "y axis")
+      .call(yAxis);
 });
