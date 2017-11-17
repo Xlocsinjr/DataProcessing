@@ -33,7 +33,6 @@ var xAxis = d3.svg.axis()
 // Defines the y-axis. Placed on the left.
 var yAxis = d3.svg.axis()
     .scale(y)
-    //.tickValues([-0.1, 0, 0.1, 0.2])
     .orient("left");
 
 // From: http://bl.ocks.org/Caged/6476579
