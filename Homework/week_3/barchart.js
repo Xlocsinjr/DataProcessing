@@ -57,7 +57,7 @@ chart.append("text")
   .attr("x", width / 2)
   .attr("y", 20)
   .style("font", "20px sans-serif")
-  .text("Sum of rainfall measured at Schiphol from october 30 to november 12 in 2017");
+  .text("Sum of rainfall measured per day at Schiphol from october 30 to november 12 in 2017");
 
 // Loads in external data
 d3.json("Rainsum.json", function(error, data) {
