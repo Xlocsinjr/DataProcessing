@@ -116,5 +116,5 @@ d3.json("Rainsum.json", function(error, data) {
       .attr("dy", ".71em")
       .style("font", "20px sans-serif")
       .style("text-anchor", "end")
-      .text("Rainfall (mm)");
+      .text("Rainfall (+ 0.1 mm)");
 });
