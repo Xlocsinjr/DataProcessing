@@ -35,12 +35,22 @@ var yAxis = d3.svg.axis()
     .scale(y)
     .orient("left");
 
+// From: http://bl.ocks.org/Caged/6476579
+var tip = d3.tip()
+  .attr('class', 'd3-tip')
+  //.offset([-10, 0])
+  .html(function(d) {
+    return "<div class='tip'>" + d.rainfall + " mm </div>";
+  })
+
 // Selects the chart in the html and gives it width and height including margins
 var chart = d3.select(".chart")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+chart.call(tip);
 
 // chart.append("text")
 //   .attr("x", barWidth / 2)
@@ -63,6 +73,7 @@ d3.json("Rainsum.json", function(error, data) {
   var bar = chart.selectAll("g")
       .data(data)
     .enter().append("g")
+      .attr("class", "bar")
       .attr("transform", function(d, i) { return "translate(" + i * barWidth + ",0)"; });
 
   // Gives the bar a rectangle (so that it's actually a bar)
@@ -74,14 +85,19 @@ d3.json("Rainsum.json", function(error, data) {
       .attr("height", function(d) {return height - y(d.rainfall + dataOffset);})
 
       // Set width to barWidth - 1 to create space between bars
-      .attr("width", barWidth - 1);
+      .attr("width", barWidth - 1)
+
+      // Shows and hides the tooltip
+      .on("mouseover", tip.show)
+      .on("mouseout", tip.hide);
 
   // Adds text to the bars displaying the rainfall
-  bar.append("text")
-      .attr("x", barWidth / 2)
-      .attr("y", function(d) { return y(d.rainfall) - 20; })
-      .attr("dy", ".75em")
-      .text(function(d) { return d.rainfall; });
+  // bar.append("text")
+  //     .attr("x", barWidth / 2)
+  //     .attr("y", function(d) { return y(d.rainfall) - 20; })
+  //     .attr("dy", ".75em")
+  //     .text(function(d) { return d.rainfall; });
+
 
   // Adds a g element for an X axis
   chart.append("g")
@@ -92,5 +108,11 @@ d3.json("Rainsum.json", function(error, data) {
   // Adds a g element for a Y axis
   chart.append("g")
       .attr("class", "y axis")
-      .call(yAxis);
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Rainfall (mm)");
 });
