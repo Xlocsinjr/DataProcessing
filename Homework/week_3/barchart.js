@@ -3,7 +3,7 @@
  *
  * Xander Locsin, 10722432
  *
- *
+ * Implements a bar chart for the
  ****/
 
 // Code is heavily based on this tutorial: https://bost.ocks.org/mike/bar/3/
@@ -17,18 +17,20 @@ var margin = {top: 20, right: 30, bottom: 30, left: 40},
 var dataOffset = 0.1;
 
 
-// Linear scale to properly set the length of the bars
-// Range of the bars starts at height since 0 is at the top
+// Ordinal scale for the x-axis to display dates
 var x = d3.scale.ordinal()
     .rangeRoundBands([0, width], .1);
 
+// Linear scale to properly set the length of the bars
 var y = d3.scale.linear()
   .range([height, 0]);
 
+// Defines the x-axis. Placed at the bottom.
 var xAxis = d3.svg.axis()
     .scale(x)
     .orient("bottom");
 
+// Defines the y-axis. Placed on the left.
 var yAxis = d3.svg.axis()
     .scale(y)
     .orient("left");
@@ -40,6 +42,11 @@ var chart = d3.select(".chart")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+// chart.append("text")
+//   .attr("x", barWidth / 2)
+//   .attr("y", function(d) { return y(d.rainfall) - 20; })
+//   .attr("dy", ".75em")
+//   .text(function(d) { return d.rainfall; });
 
 // Loads in external data
 d3.json("Rainsum.json", function(error, data) {
@@ -72,7 +79,7 @@ d3.json("Rainsum.json", function(error, data) {
   // Adds text to the bars displaying the rainfall
   bar.append("text")
       .attr("x", barWidth / 2)
-      .attr("y", function(d) { return y(d.rainfall) - 3; })
+      .attr("y", function(d) { return y(d.rainfall) - 20; })
       .attr("dy", ".75em")
       .text(function(d) { return d.rainfall; });
 
