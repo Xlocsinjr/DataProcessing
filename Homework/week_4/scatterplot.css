@@ -1,0 +1,33 @@
+.chart text {
+  fill: black;
+  font: 10px sans-serif;
+  text-anchor: middle;
+}
+
+/*From: http://bl.ocks.org/Caged/6476579*/
+.bar {
+  fill: orange;
+}
+
+.bar:hover {
+  fill: steelblue;
+}
+
+.d3-tip {
+  font: 10px sans-serif;
+  line-height: 1;
+  padding: 5px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+}
+
+.axis text {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
