@@ -5,20 +5,24 @@
 }
 
 /*From: http://bl.ocks.org/Caged/6476579*/
-.bar {
-  fill: orange;
-}
-
-.bar:hover {
-  fill: steelblue;
+.scatter_dot {
+  stroke: black;
+  stroke-width: 1;
 }
 
 .d3-tip {
-  font: 10px sans-serif;
-  line-height: 1;
+  line-height: 3;
   padding: 5px;
   background: rgba(0, 0, 0, 0.8);
   color: #fff;
+}
+
+.tip{
+  font: 10px sans-serif;
+}
+
+.tip-title {
+  font: 14px sans-serif;
 }
 
 .axis text {

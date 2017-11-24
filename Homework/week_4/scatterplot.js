@@ -46,7 +46,6 @@ window.onload = function() {
     var windspeeds = [];
     var temperatures = [];
 
-    var station_check = "";
     var station_count = 0;
     var precipitation_sum = 0;
     var windspeed_sum = 0;
@@ -58,7 +57,7 @@ window.onload = function() {
       line_split = line_split.split(",");
 
       // Retrieves information from the line
-      station = line_split[0];
+      station = parseInt(line_split[0]);
       windspeed = parseInt(line_split[2]);
       temperature = parseInt(line_split[3]);
       precipitation = parseInt(line_split[4]);
@@ -115,13 +114,32 @@ window.onload = function() {
 
     // Sets x-axis scale for windspeeds
     var x = d3.scale.linear()
-        .domain([0, d3.max(data, function(d) { return d[2]; })])
+        .domain([0, d3.max(data, function(d) { return d[2]; }) + 1])
         .range([0, width]);
 
     // Sets y-axis scale for precipitations
     var y = d3.scale.linear()
-      .domain([0, d3.max(data, function(d) { return d[1]; })])
+      .domain([0, d3.max(data, function(d) { return d[1]; }) + 0.5])
       .range([height, 0]);
+
+    /* From: https://stackoverflow.com/questions/38793897/setting-color-for-a-particular-value-when-using-d3-scale-threshold
+     * Maps the station numbers to colours */
+    var colours = ["red", "orange", "yellow", "green",
+      "steelblue", "aqua", "BurlyWood", "Cornsilk"]
+    var q = d3.scale.ordinal()
+      .domain([235, 240, 260, 269, 270, 290, 370, 380])
+      .range(colours);
+
+    // Maps station number to station names
+    var s = d3.scale.ordinal()
+      .domain([235, 240, 260, 269, 270, 290, 370, 380])
+      .range(["De Kooy", "Schiphol", "De Bilt", "Lelystad", "Leeuwarden", "Twenthe", "Eindhoven", "Maastricht"]);
+
+    // Maps average temperature to circle radius
+    var r = d3.scale.linear()
+      .domain([d3.min(data, function(d) { return d[3]; })
+        , d3.max(data, function(d) { return d[3]; })])
+      .range([5, 15]);
 
     // Defines the x-axis. Placed at the bottom.
     var xAxis = d3.svg.axis()
@@ -136,9 +154,12 @@ window.onload = function() {
     // From: http://bl.ocks.org/Caged/6476579
     var tip = d3.tip()
       .attr('class', 'd3-tip')
-      //.offset([-10, 0])
       .html(function(d) {
-        return "<div class='tip'>" + d.rainfall + " mm </div>";
+        var tip = "<div class='tip-title'>" + s(d[1]) + " </div>\n"
+          + "<div class='tip'> precipitation duration: " + d[1] + " h</div>\n"
+          + "<div class='tip'> windspeed: " + d[2] + " m/s  </div>\n"
+          + "<div class='tip'> average temperature: " + d[3] + " C  </div>\n";
+        return tip;
       })
 
     // Selects the chart in the html and gives it width and height including margins
@@ -150,22 +171,31 @@ window.onload = function() {
 
     chart.call(tip);
 
-    // Adds a title to the top of the chart
-    chart.append("text")
-      .attr("x", width / 2)
-      .attr("y", 20)
-      .style("font", "20px sans-serif")
-      .text("---");
 
-    // From example: http://bl.ocks.org/bunkat/2595950
-    var g = chart.append("g");
+    /* From example: http://bl.ocks.org/bunkat/2595950
+     * Adds dots for every station's data */
+    var dots = chart.append("g");
 
-    g.selectAll("scatter-dots")
+    dots.selectAll("scatter-dots")
       .data(data)
       .enter().append("circle")
-          .attr("cx", function (d,i) { return x(d[2]); } )
+          .attr("class", "scatter_dot")
+
+          // x based on average windspeed
+          .attr("cx", function (d) { return x(d[2]); } )
+
+          // y based on average precipitation duration
           .attr("cy", function (d) { return y(d[1]); } )
-          .attr("r", 8);
+
+          // circle size based on average temperature
+          .attr("r", function (d) { return r(d[3]); } )
+
+          // color depending on station
+          .style("fill", function (d) { return q(d[0]); })
+
+          // Shows and hides the tooltip
+          .on("mouseover", tip.show)
+          .on("mouseout", tip.hide);
 
 
     // Adds a g element for an X axis
@@ -179,7 +209,9 @@ window.onload = function() {
         .attr("y", 30)
         .style("font", "20px sans-serif")
         .style("text-anchor", "end")
-        .text("average windspeed (m/s)");
+        .text("average daily windspeed (m/s)");
+
+
 
     // Adds a g element for a Y axis
     chart.append("g")
@@ -191,6 +223,8 @@ window.onload = function() {
         .attr("dy", ".71em")
         .style("font", "20px sans-serif")
         .style("text-anchor", "end")
-        .text("average precipitation duration (hours)");
+        .text("average daily precipitation duration (hours)");
   }
 }
+
+// ADD LEGEND AND SOURCE
