@@ -35,3 +35,14 @@
   stroke: #000;
   shape-rendering: crispEdges;
 }
+
+.legend{
+  fill:#FFFFFF;
+  stroke:#020203;
+  stroke-miterlimit:10;
+}
+
+.legend_element{
+  stroke:#020203;
+  stroke-miterlimit:10;
+}

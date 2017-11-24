@@ -3,7 +3,9 @@
  *
  * Xander Locsin, 10722432
  *
- *
+ * Makes a scatterplot of the monthly average precipitation duration, average windspeed,
+ * and average temperature for various weather stations of the KNMI.
+ * The data was taken in October 2017
  ****/
 
 var days = 31;
@@ -87,10 +89,6 @@ window.onload = function() {
       }
 
     }
-    console.log(stations);
-    console.log(precipitations);
-    console.log(windspeeds);
-    console.log(temperatures);
 
     // Orders the data into points
     var data = [];
@@ -155,7 +153,7 @@ window.onload = function() {
     var tip = d3.tip()
       .attr('class', 'd3-tip')
       .html(function(d) {
-        var tip = "<div class='tip-title'>" + s(d[1]) + " </div>\n"
+        var tip = "<div class='tip-title'>" + s(d[0]) + " </div>\n"
           + "<div class='tip'> precipitation duration: " + d[1] + " h</div>\n"
           + "<div class='tip'> windspeed: " + d[2] + " m/s  </div>\n"
           + "<div class='tip'> average temperature: " + d[3] + " C  </div>\n";
@@ -197,7 +195,6 @@ window.onload = function() {
           .on("mouseover", tip.show)
           .on("mouseout", tip.hide);
 
-
     // Adds a g element for an X axis
     chart.append("g")
         .attr("class", "x axis")
@@ -211,8 +208,6 @@ window.onload = function() {
         .style("text-anchor", "end")
         .text("average daily windspeed (m/s)");
 
-
-
     // Adds a g element for a Y axis
     chart.append("g")
         .attr("class", "y axis")
@@ -224,6 +219,51 @@ window.onload = function() {
         .style("font", "20px sans-serif")
         .style("text-anchor", "end")
         .text("average daily precipitation duration (hours)");
+
+    // Adds a canvas for the Legend to the chart
+    var legend_x = 90;
+    var legend_y = height - 260;
+    var legend = chart.append("g")
+      .append("rect")
+      //<rect id="canvas" x="1.8" y="1.8" class="st0" width="175.1" height="291.4"/>
+        .attr("class", "legend")
+        .attr("x", legend_x)
+        .attr("y", legend_y)
+        .attr("width", 130)
+        .attr("height", 250);
+
+    // Adds coloured boxes to the legend
+    var legend_count = 0;
+    chart.selectAll("legend_colour")
+      .data(data)
+      .enter()
+        .append("rect")
+          .attr("class", "legend_element")
+          .attr("x", legend_x + 10)
+          .attr("y", function () { y_val = legend_y + 10 + 30 * legend_count;
+            legend_count++
+            return y_val;})
+          .attr("width", 20)
+          .attr("height", 20)
+          .style("fill", function (d) {
+            legend_count++;
+            return q(d[0]); })
+
+    // Adds text to the legend
+    var legend_count = 0;
+    chart.selectAll("legend_text")
+      .data(data)
+      .enter()
+        .append("text")
+          .attr("class", "legend_text")
+          .attr("x", legend_x + 40)
+          .attr("y", function () { y_val = legend_y + 20 + 30 * legend_count;
+            legend_count++
+            return y_val;})
+          .style("text-anchor", "start")
+          .text( function (d) {return s(d[0]); } );
+
+
   }
 }
 
