@@ -45,7 +45,7 @@ d3.xml("test.svg", "image/svg+xml", function(error, xml) {
         .append("text")
           .attr("x", 50)
           .attr("y", function() {return 40 + 40 * i;})
-          .text(String((i + 1) * 10));
+          .text(String(Math.pow(10, i + 1)));
     }
 
 
