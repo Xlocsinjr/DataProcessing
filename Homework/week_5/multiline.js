@@ -58,6 +58,7 @@ chart.append("text")
 
 // Loads in external data
 d3.json("temperatures240.json", function(error, data) {
+  if (error) throw error;
 
   // Defines domain based on the data
   x.domain(data.map(function(d) { return d.date; }));
