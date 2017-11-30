@@ -3,19 +3,22 @@
  *
  * Xander Locsin, 10722432
  *
- * Code mostly based on this example:
+ * Code based on these examples:
  * http://bl.ocks.org/d3noob/b3ff6ae1c120eea654b5
+ * http://bl.ocks.org/mikehadlow/raw/93b471e569e31af07cd3/
+ * https://www.pshrmn.com/tutorials/d3/mouse/
  ****/
 
  /* formats date to easier to read string.
   *From:https://stackoverflow.com/questions/3552461/how-to-format-a-javascript-date */
-// function formatDate(dateVariable) {
-//   var day = dateVariable.getDate();
-//   var month = dateVariable.getMonth();
-//   var year = dateVariable.getFullYear();
-//   return day + "-" + month + "-" + year;
-// };
+function formatDate(dateVariable) {
+  var day = dateVariable.getDate();
+  var month = dateVariable.getMonth();
+  var year = dateVariable.getFullYear();
+  return day + "-" + month + "-" + year;
+};
 
+// ---------------------------CHART---------------------------------------------
 
 // Sets the margins for the chart and sets the width and height
 var margin = {top: 30, right: 30, bottom: 30, left: 40},
@@ -44,47 +47,12 @@ var yAxis = d3.svg.axis()
     .scale(y)
     .orient("left");
 
-/* From: http://bl.ocks.org/Caged/6476579
- * creates different tips for the different lines */
-var tipMax = d3.tip()
-  .attr('class', 'd3-tip')
-  .html(function(d) {
-    var date = formatDate(d.date);
-    var tiptext = "<div class='tip'> date: " + date + "-"
-      + month + "-" + year + "</div>\n"
-      + "<div class='tip'> temperature: " + d.maximum + "\xB0C </div>\n";
-    return tiptext;
-  });
-
-var tipAv = d3.tip()
-  .attr('class', 'd3-tip')
-  .html(function(d) {
-    var date = formatDate(d.date);
-    var tiptext = "<div class='tip'> date: " + date + " h</div>\n"
-      + "<div class='tip'> temperature: " + d.average + "\xB0C </div>\n";
-    return tiptext;
-  });
-
-var tipMin = d3.tip()
-  .attr('class', 'd3-tip')
-  .html(function(d) {
-    var date = formatDate(d.date);
-    var tiptext = "<div class='tip'> date: " + date + " h</div>\n"
-      + "<div class='tip'> temperature: " + d.minimum + "\xB0C </div>\n";
-    return tiptext;
-  });
-
 // Selects the chart in the html and gives it width and height including margins
 var chart = d3.select(".chart")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-chart.call(tipMax);
-chart.call(tipAv);
-chart.call(tipMin);
-
 
 // Adds a title to the top of the chart
 chart.append("text")
@@ -93,6 +61,51 @@ chart.append("text")
   .style("font", "20px sans-serif")
   .text("Minimum, average and maximum temperatures measured in October");
 
+// ----------------------TOOLTIPS-----------------------------------------------
+
+/* From: http://bl.ocks.org/Caged/6476579
+ * Adds tooltips for maximum, average and minimum temperature lines */
+var tipMax = d3.tip()
+  .attr('class', 'd3-tip')
+  .html(function(d) {
+    var date = formatDate(d.date);
+    var tiptext = "<div class='tip'> date: " + date + " </div>\n"
+      + "<div class='tip'> temperature: " + d.maximum + "\xB0C </div>\n";
+    return tiptext;
+  });
+
+var tipAv = d3.tip()
+  .attr('class', 'd3-tip')
+  .html(function(d) {
+    var date = formatDate(d.date);
+    var tiptext = "<div class='tip'> date: " + date + " </div>\n"
+      + "<div class='tip'> temperature: " + d.average + "\xB0C </div>\n";
+    return tiptext;
+  });
+
+var tipMin = d3.tip()
+  .attr('class', 'd3-tip')
+  .html(function(d) {
+    var date = formatDate(d.date);
+    var tiptext = "<div class='tip'> date: " + date + " </div>\n"
+      + "<div class='tip'> temperature: " + d.minimum + "\xB0C </div>\n";
+    return tiptext;
+  });
+
+var crossTip = d3.tip()
+  .attr('class', 'd3-tip')
+  .html(function(d) {
+    var tiptext = "<div class='tip'> date: " + d.date + " h</div>\n"
+      + "<div class='tip'> temperature: " + d.minimum + "\xB0C </div>\n";
+    return tiptext;
+  });
+
+chart.call(tipMax);
+chart.call(tipAv);
+chart.call(tipMin);
+chart.call(crossTip);
+
+// -----------------------LINE DEFINITIONS--------------------------------------
 
 // From: http://bl.ocks.org/d3noob/b3ff6ae1c120eea654b5
 // Define the line
@@ -109,25 +122,40 @@ var minTempLine = d3.svg.line()
     .y(function(d) { return y(d.minimum); });
 
 
+
+
+// -----------------------LOAD EXTERNAL DATA -----------------------------------
 queue()
 	.defer(d3.json, 'temperatures240.json')
 	.defer(d3.json, 'temperatures344.json')
   .defer(d3.json, 'temperatures370.json');
 
+
 // Loads in external data
 d3.json("temperatures240.json", function(error, data) {
   if (error) throw error;
+
+  // parse date strings to dates
+  data.forEach(function(d) {
+    d.date = parseDate(d.date);
+    });
+
+  // Defines x domain as minimum to maximum of date
+  x.domain(d3.extent(data, function(d) { return d.date; }));
+
+  // Defines y domain as 0 to maximum of maximumt temperatures
+  y.domain([0, d3.max(data, function(d) {return d.maximum;})]);
 
   // ----------CROSSHAIR-------------------------------------------------------
 
   // focus tracking. From: http://bl.ocks.org/mikehadlow/93b471e569e31af07cd3
   var focus = chart.append('g').style('display', 'none');
-  // Adds horizontal line to the crosshair
+  // Adds vertical line to the crosshair
   focus.append('line')
       .attr('id', 'focusLineX')
       .attr('class', 'focusLine');
 
-  // Adds vertical line to the crosshair
+  // Adds horizontal line to the crosshair
   focus.append('line')
       .attr('id', 'focusLineY')
       .attr('class', 'focusLine');
@@ -140,47 +168,34 @@ d3.json("temperatures240.json", function(error, data) {
 
   // Adds an overlaying rectangle on which to show the crosshair
   chart.append('rect')
+      .data(data)
       .attr('class', 'overlay')
       .attr('width', width)
       .attr('height', height)
       .on('mouseover', function() { focus.style('display', null); })
       .on('mouseout', function() { focus.style('display', 'none'); })
-      .on('mousemove', function() {
+      .on('mousemove', function(d) {
           var mouse = d3.mouse(this);
-          var mouseDate = xScale.invert(mouse[0]);
-          var i = bisectDate(data, mouseDate); // returns the index to the current data item
-
-          var d0 = data[i - 1]
-          var d1 = data[i];
-          // work out which date value is closest to the mouse
-          var d = mouseDate - d0[0] > d1[0] - mouseDate ? d1 : d0;
-
-          var x = xScale(d[0]);
-          var y = yScale(d[1]);
+          var mouseX = mouse[0];
+          var mouseY = mouse[1];
 
           focus.select('#focusCircle')
-              .attr('cx', x)
-              .attr('cy', y);
+              .attr('cx', mouseX)
+              .attr('cy', mouseY);
           focus.select('#focusLineX')
-              .attr('x1', x).attr('y1', yScale(yDomain[0]))
-              .attr('x2', x).attr('y2', yScale(yDomain[1]));
+              .attr('x1', mouseX)
+              .attr('y1', y(0))
+              .attr('x2', mouseX)
+              .attr('y2', y(d3.max(data, function(d) {return d.maximum;})));
           focus.select('#focusLineY')
-              .attr('x1', xScale(xDomain[0])).attr('y1', y)
-              .attr('x2', xScale(xDomain[1])).attr('y2', y);
+              .attr('x1', x(d3.extent(data, function(d) { return d.date; })[0]))
+              .attr('y1', mouseY)
+              .attr('x2', x(d3.extent(data, function(d) { return d.date; })[1]))
+              .attr('y2', mouseY);
       });
 
-  // ------------------PATH, DATA AND DOTS--------------------------------------
 
-  // parse date strings to dates
-  data.forEach(function(d) {
-    d.date = parseDate(d.date);
-    });
-
-  // Defines x domain as minimum to maximum of date
-  x.domain(d3.extent(data, function(d) { return d.date; }));
-
-  // Defines y domain as 0 to maximum of maximumt temperatures
-  y.domain([0, d3.max(data, function(d) {return d.maximum;})]);
+  // ------------------PATH AND DOTS--------------------------------------------
 
 
   // Add line for maximum temperature.
@@ -242,6 +257,8 @@ d3.json("temperatures240.json", function(error, data) {
       // Shows and hides the tooltip
       .on("mouseover", tipMin.show)
       .on("mouseout", tipMin.hide);
+
+
 
 
   //------------------------AXES------------------------------------------------
