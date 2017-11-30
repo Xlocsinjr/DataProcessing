@@ -1,0 +1,42 @@
+.chart text {
+  fill: black;
+  font: 10px sans-serif;
+  text-anchor: middle;
+}
+
+/*From: http://bl.ocks.org/Caged/6476579*/
+.scatter_dot {
+  stroke: black;
+  stroke-width: 1;
+}
+
+.d3-tip {
+  line-height: 3;
+  padding: 5px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+}
+
+.tip{
+  font: 10px sans-serif;
+}
+
+.tip-title {
+  font: 14px sans-serif;
+}
+
+.line {
+    stroke-width: 2;
+    fill: none;
+}
+
+.axis text {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
