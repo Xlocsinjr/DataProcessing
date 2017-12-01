@@ -17,7 +17,7 @@
  *  For mouse tracking
  * http://bl.ocks.org/d3noob/7030f35b72de721622b8
  *  For update data buttons
- ****/
+ ******************************************************************************/
 
  /* formats date to easier to read string.
   *From:https://stackoverflow.com/questions/3552461/how-to-format-a-javascript-date */
@@ -28,14 +28,15 @@ function formatDate(dateVariable) {
   return day + "-" + month + "-" + year;
 };
 
-var fileStrings = ['temperatures240.json', 'temperatures344.json', 'temperatures370.json'];
+var fileStrings = ['temperatures240.json', 'temperatures344.json',
+                  'temperatures370.json'];
 var names = ['Schiphol', 'Rotterdam', 'Eindhoven'];
 
 var fileString = fileStrings[0]
 function makePlot(fileIndex) {
   d3.selectAll(".chart > *").remove();
 
-  // ---------------------------CHART---------------------------------------------
+  // ---------------------------CHART-------------------------------------------
 
   // Sets the margins for the chart and sets the width and height
   var margin = {top: 50, right: 150, bottom: 30, left: 40},
@@ -64,7 +65,7 @@ function makePlot(fileIndex) {
       .scale(y)
       .orient("left");
 
-  // Selects the chart in the html and gives it width and height including margins
+  // Selects the chart in the html and gives it width and height with margins
   var chart = d3.select(".chart")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
@@ -79,7 +80,7 @@ function makePlot(fileIndex) {
     .text("Minimum, average and maximum temperatures measured in October in "
       + names[fileIndex]);
 
-  // ----------------------TOOLTIPS-----------------------------------------------
+  // ----------------------TOOLTIPS---------------------------------------------
 
   /* From: http://bl.ocks.org/Caged/6476579
    * Adds tooltips for maximum, average and minimum temperature lines */
@@ -110,6 +111,7 @@ function makePlot(fileIndex) {
       return tiptext;
     });
 
+  // Adds a tooltip for the crosshair
   var crossTip = d3.tip()
     .attr('class', 'd3-tip2')
     .html(function(d) {
@@ -123,10 +125,9 @@ function makePlot(fileIndex) {
   chart.call(tipMin);
   chart.call(crossTip);
 
-  // -----------------------LINE DEFINITIONS--------------------------------------
+  // -----------------------LINE DEFINITIONS------------------------------------
 
-  // From: http://bl.ocks.org/d3noob/b3ff6ae1c120eea654b5
-  // Define the line
+  // Defines the lines. From: http://bl.ocks.org/d3noob/b3ff6ae1c120eea654b5
   var Line = d3.svg.line()
       .x(function(d) { return x(d.date); })
       .y(function(d) { return y(d.value); });
