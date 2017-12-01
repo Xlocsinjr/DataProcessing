@@ -204,10 +204,10 @@ function makePlot(fileIndex) {
             var mouseX = mouse[0];
             var mouseY = mouse[1];
 
-            var stuff = mouseX;
+            // Gather information from mouse position
             var mouseDate = formatDate(x.invert(mouseX));
             var mouseTemp = String(y.invert(mouseY)) + "\xB0C";
-            var stuff3 = [mouseDate, mouseTemp]
+            var mouseData = [mouseDate, mouseTemp]
 
 
             var tipOffsetX = -60;
@@ -219,8 +219,9 @@ function makePlot(fileIndex) {
               .attr('cx', mouseX + tipOffsetX)
               .attr('cy', mouseY + tipOffsetY)
               .node();
-            crossTip.show(stuff3, target);
+            crossTip.show(mouseData, target);
 
+            // Update the crosshairs location
             focus.select('#focusCircle')
               .attr('cx', mouseX)
               .attr('cy', mouseY);
@@ -236,7 +237,7 @@ function makePlot(fileIndex) {
               .attr('y2', mouseY);
         });
 
-    // ------------------PATH AND DOTS--------------------------------------------
+    // ------------------PATH AND DOTS------------------------------------------
 
     // Add line for maximum temperature.
     chart.append("path")
@@ -298,9 +299,6 @@ function makePlot(fileIndex) {
         .on("mouseover", tipMin.show)
         .on("mouseout", tipMin.hide);
 
-
-
-
     //------------------------AXES AND LEGEND-----------------------------------
 
     // Adds a g element for an X axis
@@ -329,14 +327,14 @@ function makePlot(fileIndex) {
         .text("Temperature (\xB0C)");
 
     // Adds a canvas for the Legend to the chart
-    var legend_x = width + 10;
-    var legend_y = height - 260;
+    var legend_x = width;
+    var legend_y = 0;
     var legend = chart.append("g");
     legend.append("rect")
         .attr("class", "legend")
         .attr("x", legend_x)
         .attr("y", legend_y)
-        .attr("width", 130)
+        .attr("width", 150)
         .attr("height", 110);
 
     // Adds coloured boxes to the legend
@@ -364,7 +362,8 @@ function makePlot(fileIndex) {
           .style("text-anchor", "start")
           .text( lineTypes[i]);
     }
-
   });
 };
+
+// Start the page with a chart for Schiphol's data
 makePlot(0);
