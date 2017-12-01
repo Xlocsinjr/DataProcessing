@@ -3,10 +3,20 @@
  *
  * Xander Locsin, 10722432
  *
+ * Creates a multi-series line chart. A chart can be made for Schiphol,
+ * Rotterdam and Eindhoven by clicking buttons in the multiline.html.
+ * Data was gathered from the KNMI website:
+ *  http://projects.knmi.nl/klimatologie/daggegevens/selectie.cgi
+ *
  * Code based on these examples:
-\ * http://bl.ocks.org/d3noob/b3ff6ae1c120eea654b5
- * http://bl.ocks.org/mikehadlow/raw/93b471e569e31af07cd3/
+ * http://bl.ocks.org/d3noob/b3ff6ae1c120eea654b5
+ *  For basic line graph
+ * http://bl.ocks.org/mikehadlow/93b471e569e31af07cd3
+ *  For the crosshairs
  * https://www.pshrmn.com/tutorials/d3/mouse/
+ *  For mouse tracking
+ * http://bl.ocks.org/d3noob/7030f35b72de721622b8
+ *  For update data buttons
  ****/
 
  /* formats date to easier to read string.
@@ -28,7 +38,7 @@ function makePlot(fileIndex) {
   // ---------------------------CHART---------------------------------------------
 
   // Sets the margins for the chart and sets the width and height
-  var margin = {top: 30, right: 30, bottom: 30, left: 40},
+  var margin = {top: 50, right: 150, bottom: 30, left: 40},
       width = 960 - margin.left - margin.right,
       height = 500 - margin.top - margin.bottom;
 
@@ -64,7 +74,7 @@ function makePlot(fileIndex) {
   // Adds a title to the top of the chart
   chart.append("text")
     .attr("x", width / 2)
-    .attr("y", 0)
+    .attr("y", -20)
     .style("font", "20px sans-serif")
     .text("Minimum, average and maximum temperatures measured in October in "
       + names[fileIndex]);
@@ -291,7 +301,7 @@ function makePlot(fileIndex) {
 
 
 
-    //------------------------AXES------------------------------------------------
+    //------------------------AXES AND LEGEND-----------------------------------
 
     // Adds a g element for an X axis
     chart.append("g")
@@ -317,7 +327,44 @@ function makePlot(fileIndex) {
         .style("font", "20px sans-serif")
         .style("text-anchor", "end")
         .text("Temperature (\xB0C)");
+
+    // Adds a canvas for the Legend to the chart
+    var legend_x = width + 10;
+    var legend_y = height - 260;
+    var legend = chart.append("g");
+    legend.append("rect")
+        .attr("class", "legend")
+        .attr("x", legend_x)
+        .attr("y", legend_y)
+        .attr("width", 130)
+        .attr("height", 110);
+
+    // Adds coloured boxes to the legend
+    var colours = ["orange", "grey", "steelblue"]
+    var lineTypes = ["Maximum temperature", "Average temperature", "Minimum temperature" ]
+    //var legendColourBoxes = chart.selectAll("legend_colour")
+    for (var i = 0; i < 3; i++) {
+      legend.append("rect")
+        .attr("class", "legend_element")
+        .attr("x", legend_x + 10)
+        .attr("y", function () { y_val = legend_y + 10 + 30 * i;
+          return y_val;})
+        .attr("width", 20)
+        .attr("height", 20)
+        .style("fill", colours[i])
+    }
+
+    // Adds text to the legend
+    for (var i = 0; i < 3; i++) {
+      legend.append("text")
+          .attr("class", "legend_text")
+          .attr("x", legend_x + 40)
+          .attr("y", function () { y_val = legend_y + 20 + 30 * i;
+            return y_val;})
+          .style("text-anchor", "start")
+          .text( lineTypes[i]);
+    }
+
   });
 };
-
 makePlot(0);

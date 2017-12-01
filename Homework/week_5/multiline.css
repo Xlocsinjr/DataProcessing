@@ -65,3 +65,15 @@
   stroke-width: 1;
   fill: white;
 }
+
+
+.legend{
+  fill:#FFFFFF;
+  stroke:#020203;
+  stroke-miterlimit:10;
+}
+
+.legend_element{
+  stroke:#020203;
+  stroke-miterlimit:10;
+}
