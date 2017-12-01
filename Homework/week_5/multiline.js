@@ -101,7 +101,7 @@ function makePlot(fileIndex) {
     });
 
   var crossTip = d3.tip()
-    .attr('class', 'd3-tip')
+    .attr('class', 'd3-tip2')
     .html(function(d) {
       var tiptext = "<div class='tip2'>" + d[0] + "</div>"
         + "<div class='tip2'> " + d[1] + " </div>";
@@ -173,8 +173,8 @@ function makePlot(fileIndex) {
     // Adds a circle to anchor the tooltip to
     focus.append('circle')
         .attr('id', 'tipAnchor')
-        .attr('r', 5);
-        //.style('display', 'none');
+        .attr('r', 5)
+        .style('opacity', 0);
 
     // Adds an overlaying rectangle on which to show the crosshair
     var crossChart = chart.append('g');
@@ -200,8 +200,8 @@ function makePlot(fileIndex) {
             var stuff3 = [mouseDate, mouseTemp]
 
 
-            var tipOffsetX = 35;
-            var tipOffsetY = 45;
+            var tipOffsetX = -60;
+            var tipOffsetY = 35;
 
             /* Sets circle bottom-right from cursor to anchor the tip to
              * From: https://github.com/Caged/d3-tip/issues/53 */
