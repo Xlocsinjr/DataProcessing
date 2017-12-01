@@ -214,7 +214,7 @@ function makePlot(fileIndex) {
             var tipOffsetX = -60;
             var tipOffsetY = 35;
 
-            /* Sets circle bottom-right from cursor to anchor the tip to
+            /* Sets a circle bottom-left from cursor to anchor the tip to
              * From: https://github.com/Caged/d3-tip/issues/53 */
             var target = focus.select('#tipAnchor')
               .attr('cx', mouseX + tipOffsetX)
