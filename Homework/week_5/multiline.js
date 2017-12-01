@@ -103,7 +103,8 @@ function makePlot(fileIndex) {
   var crossTip = d3.tip()
     .attr('class', 'd3-tip')
     .html(function(d) {
-      var tiptext = "<div class='tip'>Test</div><div> Test </div>";
+      var tiptext = "<div class='tip2'>" + d[0] + "</div>"
+        + "<div class='tip2'> " + d[1] + " </div>";
       return tiptext;
     });
 
@@ -169,6 +170,12 @@ function makePlot(fileIndex) {
         .attr('r', 5)
         .attr('class', 'circle focusCircle');
 
+    // Adds a circle to anchor the tooltip to
+    focus.append('circle')
+        .attr('id', 'tipAnchor')
+        .attr('r', 5);
+        //.style('display', 'none');
+
     // Adds an overlaying rectangle on which to show the crosshair
     var crossChart = chart.append('g');
     crossChart.append('rect')
@@ -176,7 +183,8 @@ function makePlot(fileIndex) {
         .attr('class', 'overlay')
         .attr('width', width)
         .attr('height', height)
-        .on('mouseover', function() { focus.style('display', null); })
+        .on('mouseover', function(d) {focus.style('display', null);
+        })
         .on('mouseout', function() {
           focus.style('display', 'none');
           crossTip.hide();
@@ -185,6 +193,23 @@ function makePlot(fileIndex) {
             var mouse = d3.mouse(this);
             var mouseX = mouse[0];
             var mouseY = mouse[1];
+
+            var stuff = mouseX;
+            var mouseDate = formatDate(x.invert(mouseX));
+            var mouseTemp = String(y.invert(mouseY)) + "\xB0C";
+            var stuff3 = [mouseDate, mouseTemp]
+
+
+            var tipOffsetX = 35;
+            var tipOffsetY = 45;
+
+            /* Sets circle bottom-right from cursor to anchor the tip to
+             * From: https://github.com/Caged/d3-tip/issues/53 */
+            var target = focus.select('#tipAnchor')
+              .attr('cx', mouseX + tipOffsetX)
+              .attr('cy', mouseY + tipOffsetY)
+              .node();
+            crossTip.show(stuff3, target);
 
             focus.select('#focusCircle')
               .attr('cx', mouseX)
@@ -199,7 +224,6 @@ function makePlot(fileIndex) {
               .attr('y1', mouseY)
               .attr('x2', x(d3.extent(data, function(d) { return d.date; })[1]))
               .attr('y2', mouseY);
-
         });
 
     // ------------------PATH AND DOTS--------------------------------------------
