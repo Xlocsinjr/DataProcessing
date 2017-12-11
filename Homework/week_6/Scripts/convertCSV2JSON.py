@@ -13,10 +13,10 @@ dataDir = os.path.join(scriptDir, "Data")
 
 def main():
     converter("Data/DeBilt.csv", "Data/DeBilt.json")
-    # converter("/Data/Eindhoven.csv", "/Data/Eindhoven.json")
-    # converter("/Data/Leeuwarden.csv", "/Data/Leeuwarden.json")
-    # converter("/Data/Schiphol.csv", "/Data/Schiphol.json")
-    # converter("/Data/Vlissingen.csv", "/Data/Vlissingen.json")
+    converter("Data/Eindhoven.csv", "Data/Eindhoven.json")
+    converter("Data/Leeuwarden.csv", "Data/Leeuwarden.json")
+    converter("Data/Schiphol.csv", "Data/Schiphol.json")
+    converter("Data/Vlissingen.csv", "Data/Vlissingen.json")
 
 
 def converter(csvFileName, jsonFileName):
@@ -25,9 +25,10 @@ def converter(csvFileName, jsonFileName):
 
     # Starts jsonfile with opening bracket, then iterate through every row in csv
     jsonFilePath = os.path.join(scriptDir, jsonFileName)
-    jsonFile = open(jsonFilePath, "w")
+    jsonFile = open(jsonFilePath, "w+")
     jsonFile.write("[")
 
+    firstRow = True
     for row in csvFile:
         dictionary = {}
         new_row = row.split(",")
@@ -48,11 +49,13 @@ def converter(csvFileName, jsonFileName):
         dictionary["maximum"] = round(T_max, 1)
 
         # Dumps the dictionary as a row in the json
+        if not firstRow:
+            jsonFile.write(",")
+
         json.dump(dictionary, jsonFile)
-        jsonFile.write(",")
+        firstRow = False
 
     # Overwrites last "," with a closing bracket
-    jsonFile.seek(-1, 1)
     jsonFile.write("]")
 
 if __name__ == '__main__':
