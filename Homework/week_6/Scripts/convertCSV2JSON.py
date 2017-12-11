@@ -1,39 +1,59 @@
 # convertCSV2JSON.py
 #
-# converts a csv file into a json file and averages the rainfall sum in a day
-# per month
+# converts a csv file into a json file
 #
 # Xander Locsin 10722432
-# 15-11-2017
 # ------------------------------------------
 import csv
 import json
+import os
 
-# Opens files
-csvfile = open('KNMI_20171112_reduced.csv', 'r')
-jsonfile = open('Rainsum.json', 'w')
+scriptDir = os.path.dirname(os.path.dirname(__file__))
+dataDir = os.path.join(scriptDir, "Data")
 
-# Starts jsonfile with opening bracket, then iterate through every row in csv
-jsonfile.write("[")
-for row in csvfile:
-    dictionary = {}
+def main():
+    converter("Data/DeBilt.csv", "Data/DeBilt.json")
+    # converter("/Data/Eindhoven.csv", "/Data/Eindhoven.json")
+    # converter("/Data/Leeuwarden.csv", "/Data/Leeuwarden.json")
+    # converter("/Data/Schiphol.csv", "/Data/Schiphol.json")
+    # converter("/Data/Vlissingen.csv", "/Data/Vlissingen.json")
 
-    # Split row at "," and remove station number
-    new_row = row.split(",")
-    del new_row[0]
 
-    # Forms a string for the date to put in the dictionary
-    date_string = new_row[0][:4] + "-" + new_row[0][4:6] + "-" + new_row[0][6:]
-    dictionary["date"] = date_string
+def converter(csvFileName, jsonFileName):
+    csvFilePath = os.path.join(scriptDir, csvFileName)
+    csvFile = open(csvFilePath, "r")
 
-    # Calculates rainfall per day in millimeters and adds it to the dictionary
-    rain = int(new_row[1].strip()) * 0.1
-    dictionary["rainfall"] = round(rain, 1)
+    # Starts jsonfile with opening bracket, then iterate through every row in csv
+    jsonFilePath = os.path.join(scriptDir, jsonFileName)
+    jsonFile = open(jsonFilePath, "w")
+    jsonFile.write("[")
 
-    # Dumps the dictionary as a row in the json
-    json.dump(dictionary, jsonfile)
-    jsonfile.write(",")
+    for row in csvFile:
+        dictionary = {}
+        new_row = row.split(",")
 
-# Overwrites last "," with a closing bracket
-jsonfile.seek(-1, 1)
-jsonfile.write("]")
+        # Forms a string for the date to put in the dictionary
+        #new_row[1][:4] + "-" + new_row[1][4:6] + "-" + new_row[1][6:]
+        date_string = new_row[1]
+        dictionary["date"] = date_string
+
+        # Formats average, minimum and maximum temperature per day
+        T_av = int(new_row[2].strip()) * 0.1
+        dictionary["average"] = round(T_av, 1)
+
+        T_min = int(new_row[3].strip()) * 0.1
+        dictionary["minimum"] = round(T_min, 1)
+
+        T_max = int(new_row[4].strip()) * 0.1
+        dictionary["maximum"] = round(T_max, 1)
+
+        # Dumps the dictionary as a row in the json
+        json.dump(dictionary, jsonFile)
+        jsonFile.write(",")
+
+    # Overwrites last "," with a closing bracket
+    jsonFile.seek(-1, 1)
+    jsonFile.write("]")
+
+if __name__ == '__main__':
+    main()
