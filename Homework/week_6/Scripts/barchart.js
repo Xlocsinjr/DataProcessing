@@ -59,34 +59,63 @@ chart.append("text")
 
 // ----------------- LOAD EXTERNAL DATA ----------------------------------------
 queue()
-	.defer(d3.json, '../Data/DeBilt.json')
-	.defer(d3.json, '../Data/Eindhoven.json')
-	.await(makeBar);
+  .defer(d3.json, "../Data/DeBilt.json")
+	.defer(d3.json, "../Data/Eindhoven.json")
+  .defer(d3.json, "../Data/Leeuwarden.json")
+  .defer(d3.json, "../Data/Schiphol.json")
+  .defer(d3.json, "../Data/Vlissingen.json")
+	.await(collectData);
 
 var names = ["De Bilt", "Eindhoven", "Leeuwarden", "Schiphol", "Vlissingen"]
 
-function makeBar(error, dataDeBilt, dataEindhoven) {
+
+dateData = [];
+
+// Function to collect the data for a single date from all stations.
+function collectData(error, dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchiphol, dataVlissingen) {
+  dateData[0] = getStationData(error, dataDeBilt, names[0]);
+  dateData[1] = getStationData(error, dataEindhoven, names[1]);
+  dateData[2] = getStationData(error, dataLeeuwarden, names[2]);
+  dateData[3] = getStationData(error, dataSchiphol, names[3]);
+  dateData[4] = getStationData(error, dataVlissingen, names[4]);
+};
+
+// Function to collect the data for a single date from a specific station.
+function getStationData(error, data, station){
   if (error) throw error;
 
-  // parse date strings to dates
-  dataDeBilt.forEach(function(d) {
-    d.date = parseDate(d.date);
-    });
+  stationData = {};
+  stationData["station"] = station;
 
+  // Collect data for a date.
+  data.forEach(function(d) {
+    if (d.date == "2017-10-01") {
+      stationData.minimum = d.minimum;
+      stationData.average = d.average;
+      stationData.maximum = d.maximum;
+    };
+  });
+  return stationData;
+};
+
+console.log(dateData)
+
+// ----------------- BAR CHART -------------------------------------------------
+
+function makeBar(dateData) {
   // Defines domain based on the data
   x.domain(names);
-  y.domain(d3.extent(dataDeBilt, function(d) { return d.average; }));
-
+  y.domain(d3.extent(dataData, function(d) { return d.average; }));
 
   // Width of the bar is defined as width divided by the number of data entries
-  var barWidth = width / dataDeBilt.length;
+  var barWidth = width / 5;
 
   // Loads in the external data into g elements
   var bar = chart.selectAll("g")
       .data(dataDeBilt)
     .enter().append("g")
       .attr("class", "bar")
-      .attr("transform", function(d, i) {return "translate(" + i * barWidth + ",0)";});
+      .attr("transform", function(d, i) { return "translate(" + i * barWidth + ",0)"; });
 
   // Gives the bar a rectangle
   bar.append("rect")
