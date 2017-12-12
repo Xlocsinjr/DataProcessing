@@ -33,9 +33,10 @@ def converter(csvFileName, jsonFileName):
         dictionary = {}
         new_row = row.split(",")
 
+
+
         # Forms a string for the date to put in the dictionary
-        #new_row[1][:4] + "-" + new_row[1][4:6] + "-" + new_row[1][6:]
-        date_string = new_row[1]
+        date_string = new_row[1][:4] + "-" + new_row[1][4:6] + "-" + new_row[1][6:]
         dictionary["date"] = date_string
 
         # Formats average, minimum and maximum temperature per day
