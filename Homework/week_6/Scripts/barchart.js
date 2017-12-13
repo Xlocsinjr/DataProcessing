@@ -4,8 +4,10 @@
  * Xander Locsin, 10722432
  *
  * Implements a bar chart using d3 to create svg elements in barchart.html
+ *
  * Code is heavily based on this tutorial: https://bost.ocks.org/mike/bar/3/
- * From: http://bl.ocks.org/Caged/6476579
+ * For the tooltips:
+ * http://bl.ocks.org/Caged/6476579
  ****/
 
 // Sets the margins for the chart and sets the width and height
@@ -69,68 +71,65 @@ queue()
 var names = ["De Bilt", "Eindhoven", "Leeuwarden", "Schiphol", "Vlissingen"]
 
 
-dateData = [];
-
 // Function to collect the data for a single date from all stations.
 function collectData(error, dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchiphol, dataVlissingen) {
+  var dateData = [];
   dateData[0] = getStationData(error, dataDeBilt, names[0]);
   dateData[1] = getStationData(error, dataEindhoven, names[1]);
   dateData[2] = getStationData(error, dataLeeuwarden, names[2]);
   dateData[3] = getStationData(error, dataSchiphol, names[3]);
   dateData[4] = getStationData(error, dataVlissingen, names[4]);
-};
 
-// Function to collect the data for a single date from a specific station.
-function getStationData(error, data, station){
-  if (error) throw error;
-
-  stationData = {};
-  stationData["station"] = station;
-
-  // Collect data for a date.
-  data.forEach(function(d) {
-    if (d.date == "2017-10-01") {
-      stationData.minimum = d.minimum;
-      stationData.average = d.average;
-      stationData.maximum = d.maximum;
-    };
-  });
-  return stationData;
-};
-
-console.log(dateData)
-
-// ----------------- BAR CHART -------------------------------------------------
-
-function makeBar(dateData) {
-  // Defines domain based on the data
-  x.domain(names);
-  y.domain(d3.extent(dataData, function(d) { return d.average; }));
-
+  // ----------------- BAR CHART -----------------------------------------------
   // Width of the bar is defined as width divided by the number of data entries
   var barWidth = width / 5;
 
-  // Loads in the external data into g elements
-  var bar = chart.selectAll("g")
-      .data(dataDeBilt)
+  // Defines domain based on the data
+  x.domain(names);
+  y.domain([-5, 35]);
+  // d3.extent(dateData, function(d) { return d[2]; })
+
+  var bar = chart.selectAll(".stuff")
+    .data(dateData)
     .enter().append("g")
       .attr("class", "bar")
       .attr("transform", function(d, i) { return "translate(" + i * barWidth + ",0)"; });
 
-  // Gives the bar a rectangle
+
+  // Gives the bar a rectangle for the minimum temperature
   bar.append("rect")
-      // gives the rectangle a proper range and  domain
-      .attr("y", function(d) { return y(+d.average); })
+    // gives the rectangle a proper range and  domain
+    .attr("y", function(d) { return y(d.minimum); })
 
-      // Set height to the temperature data.
-      .attr("height", function(d) {return height - y(+d.average);})
+    // Set height to the temperature data.
+    .attr("height", function(d) {return height - y(d.minimum);})
 
-      // Set width to barWidth - 1 to create space between bars
-      .attr("width", barWidth - 1)
+    // Set width to barWidth - 1 to create space between bars
+    .attr("width", (barWidth / 3) - 1)
 
-      // Shows and hides the tooltip
-      .on("mouseover", tip.show)
-      .on("mouseout", tip.hide);
+    .style("fill", "steelblue")
+    .on("mouseover", tip.show)
+    .on("mouseout", tip.hide);
+
+  // Gives the bar a rectangle for the average temperature
+  bar.append("rect")
+    .attr("y", function(d) { return y(d.average); })
+    .attr("x", (barWidth / 3))
+    .attr("height", function(d) {return height - y(d.average);})
+    .attr("width", (barWidth / 3) - 1)
+    .style("fill", "grey")
+    .on("mouseover", tip.show)
+    .on("mouseout", tip.hide);
+
+  // Gives the bar a rectangle for the maximum temperature
+  bar.append("rect")
+    .attr("y", function(d) { return y(d.maximum); })
+    .attr("x", (barWidth / 3) * 2)
+    .attr("height", function(d) {return height - y(d.maximum);})
+    .attr("width", (barWidth / 3) - 1)
+    .style("fill", "orange")
+    .on("mouseover", tip.show)
+    .on("mouseout", tip.hide);
 
 
   // Adds a g element for an X axis
@@ -144,7 +143,7 @@ function makeBar(dateData) {
       .attr("y", 30)
       .style("font", "20px sans-serif")
       .style("text-anchor", "end")
-      .text("Date");
+      .text("Station");
 
   // Adds a g element for a Y axis
   chart.append("g")
@@ -156,5 +155,25 @@ function makeBar(dateData) {
       .attr("dy", ".71em")
       .style("font", "20px sans-serif")
       .style("text-anchor", "end")
-      .text("Rainfall (+ 0.1 mm)");
+      .text("Temperature (\xB0C)");
+};
+
+
+
+// Function to collect the data for a single date from a specific station.
+function getStationData(error, data, station){
+  if (error) throw error;
+
+  var stationData = {};
+  stationData["station"] = station;
+
+  // Collect data for a date.
+  data.forEach(function(d) {
+    if (d.date == "2017-10-01") {
+      stationData.minimum = d.minimum;
+      stationData.average = d.average;
+      stationData.maximum = d.maximum;
+    };
+  });
+  return stationData;
 };

@@ -18,13 +18,8 @@
   text-anchor: middle;
 }
 
-/*From: http://bl.ocks.org/Caged/6476579*/
-.bar {
-  fill: orange;
-}
-
 .bar:hover {
-  fill: steelblue;
+  stroke: black;
 }
 
 .d3-tip {
