@@ -16,7 +16,7 @@
 var parseDate = d3.time.format("%Y-%m-%d").parse;
 
 
-
+// ----------------- CALENDAR INITIALISATION -----------------------------------
 
 // Sets the margins for the calendar view.
 var calendarMargin = {top: 20, right: 30, bottom: 30, left: 30},
@@ -97,21 +97,31 @@ queue()
 
 var names = ["De Bilt", "Eindhoven", "Leeuwarden", "Schiphol", "Vlissingen"]
 
-// Function to collect the data for a single date from all stations.
+// Loads in all data sets and makes the charts.
 function collectData(error, dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchiphol, dataVlissingen) {
+
+  // Collects all temperatures for all stations for a single date
   var dateData = [];
-  dateData[0] = getStationData(error, dataDeBilt, names[0]);
-  dateData[1] = getStationData(error, dataEindhoven, names[1]);
-  dateData[2] = getStationData(error, dataLeeuwarden, names[2]);
-  dateData[3] = getStationData(error, dataSchiphol, names[3]);
-  dateData[4] = getStationData(error, dataVlissingen, names[4]);
+  plotDate = "2017-10-01";
+  dateData[0] = getStationData(error, dataDeBilt, names[0], plotDate);
+  dateData[1] = getStationData(error, dataEindhoven, names[1], plotDate);
+  dateData[2] = getStationData(error, dataLeeuwarden, names[2], plotDate);
+  dateData[3] = getStationData(error, dataSchiphol, names[3], plotDate);
+  dateData[4] = getStationData(error, dataVlissingen, names[4], plotDate);
+
+  // Collects average temperature for the Schiphol weather station for all dates
+  var calendarData = [];
+  // Collect data for a date.
+  dataSchiphol.forEach(function(d, i) {
+    var dateAverage = {};
+    dateAverage.date = parseDate(d.date);
+    dateAverage.average = d.average;
+    calendarData[i] = dateAverage;
+  });
 
   // ----------------- CALENDAR -----------------------------------------------
 
-  var data = d3.nest()
-    .key(function(d) { return d.Date; })
-    .rollup(function(d) { return  Math.sqrt(d[0].Comparison_Type / Comparison_Type_Max); })
-    .map(csv);
+
 
   // ----------------- BAR CHART -----------------------------------------------
   // Width of bars in the chart set to width divided by number of data entries
@@ -194,7 +204,7 @@ function collectData(error, dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchip
 
 
 // Function to collect the data for a single date from a specific station.
-function getStationData(error, data, station){
+function getStationData(error, data, station, date){
   if (error) throw error;
 
   var stationData = {};
