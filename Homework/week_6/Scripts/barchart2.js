@@ -38,7 +38,7 @@ var calendarView = d3.select(".calendarView")
   .append("g")
     .attr("transform", "translate(" + calendarMargin.left + "," + calendarMargin.top + ")");
 
-var cellSize = 17;
+var cellSize = 50;
 
 // Colour range
 var colour = d3.scale.linear().range(["white", '#002b53'])
@@ -51,7 +51,7 @@ var calendarLegend = calendarView.selectAll(".legend")
       .data(month)
     .enter().append("g")
       .attr("class", "legend")
-      .attr("transform", function(d, i) { return "translate(" + (((i+1) * 100)+8) + ",0)"; });
+      .attr("transform", function(d, i) { return "translate( 0," + (100 + i * 150) + ")"; });
 
 calendarLegend.append("text")
    .attr("class", function(d,i){ return month[i] })
