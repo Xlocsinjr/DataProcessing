@@ -27,7 +27,7 @@ var day = d3.time.format("%w");
 
 // Sets the margins for the calendar view.
 var calendarMargin = {top: 20, right: 30, bottom: 30, left: 30},
-  calendarWidth = 450 - calendarMargin.left - calendarMargin.right,
+  calendarWidth = 400 - calendarMargin.left - calendarMargin.right,
   calendarHeight = 500 - calendarMargin.top - calendarMargin.bottom;
 
 
@@ -38,13 +38,9 @@ var calendarView = d3.select(".calendarView")
   .append("g")
     .attr("transform", "translate(" + calendarMargin.left + "," + calendarMargin.top + ")");
 
-var cellSize = 50;
+var cellSize = 25;
 
-// Colour range
-var colour = d3.scale.linear().range(["white", '#002b53'])
-    .domain([0, 1])
-
-var month = ['Sep','Oct','Nov'];
+var month = ['September','October','November'];
 
 // Adds a legend to show the month names.
 var calendarLegend = calendarView.selectAll(".legend")
@@ -55,10 +51,21 @@ var calendarLegend = calendarView.selectAll(".legend")
 
 calendarLegend.append("text")
    .attr("class", function(d,i){ return month[i] })
+   .attr("x", 50)
    .style("text-anchor", "end")
-   .attr("dy", "-.25em")
    .text(function(d,i){ return month[i] });
 
+// Calendar tooltip to show average temperature of a date.
+var calendarTip = d3.tip()
+ .attr('class', 'd3-tip')
+ .offset([-10, 0])
+ .html(function(d) {
+   var tipDateString = "<strong> Date: </strong>" + formatDate(d.date) + "\n .";
+   var tipTempString = "<strong> Average temperature: </strong>" + String(d.average);
+   return tipDateString + tipTempString;
+ });
+
+calendarView.call(calendarTip);
 // ----------------- BAR CHART INITIALISATION ----------------------------------
 
 // Sets the margins for the bar chart and sets the width and height
@@ -146,8 +153,15 @@ function collectData(error, dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchip
     .data(function(d) { return d3.time.months(new Date(2017, 9, 1), new Date(2017, 12, 1)); })
     .enter().append("path")
     .attr("class", "month")
-    .attr("id", function(d,i){ return month[i] })
-    .attr("d", monthPath);
+    .attr("id", function(d,i){ return month[i] });
+    //.attr("d", monthPath);
+
+  // Colour range
+  var colour = d3.scale.linear()
+    .range(["white", "blue"])
+    .domain(d3.extent(calendarData, function(d) { return d.average; }));
+
+  var monthOffset = -cellSize - 2;
 
   var calendarRect = calendarView.selectAll(".day")
     .data(calendarData)
@@ -160,15 +174,20 @@ function collectData(error, dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchip
       .attr("height", cellSize)
 
       // Set position of rect based on the weeknumber and day in the week.
-      .attr("x", function(d) { return (week(d.date) * cellSize); })
-      .attr("y", function(d) { return day(d.date) * cellSize; })
-      .attr("fill",'#fff')
+      .attr("x", function(d) { return (day(d.date) * cellSize) + 100; })
+      .attr("y", function(d) {
+        if ((d.date).getDate() == 1) {
+          monthOffset += cellSize + 2
+        }
+        rectY = (week(d.date) - 30) * cellSize - 40 + monthOffset
+        return rectY;
+      })
+      .attr("fill", function(d) { return colour(d.average); })
+      .attr("stroke", "black")
 
-      // Assigns this date as data on this rect
-      .datum(function(d) { return d.date; });
-
-  calendarRect.filter(function(d) { return d in calendarData; })
-        .attr("fill", function(d) { return colour(calendarData[d]); })
+      // Shows and hides the calendar tooltip.
+      .on("mouseover", calendarTip.show)
+      .on("mouseout", calendarTip.hide);
 
   // ----------------- BAR CHART -----------------------------------------------
   // Width of bars in the chart set to width divided by number of data entries
@@ -269,15 +288,10 @@ function getStationData(error, data, station, date){
 };
 
 
-// Function do draw a path around the calendar's months
-// ==============REQUIRES UNDERSTANDING =========================================
-function monthPath(t0) {
-  var t1 = new Date(t0.getFullYear(), t0.getMonth() + 1, 0),
-      d0 = +day(t0), w0 = +week(t0),
-      d1 = +day(t1), w1 = +week(t1);
-  return "M" + (w0 + 1) * cellSize + "," + d0 * cellSize
-      + "H" + w0 * cellSize + "V" + 7 * cellSize
-      + "H" + w1 * cellSize + "V" + (d1 + 1) * cellSize
-      + "H" + (w1 + 1) * cellSize + "V" + 0
-      + "H" + (w0 + 1) * cellSize + "Z";
-}
+// formats date to easier to read string.
+function formatDate(dateVariable) {
+ var day = dateVariable.getDate();
+ var month = dateVariable.getMonth();
+ var year = dateVariable.getFullYear();
+ return day + "-" + month + "-" + year;
+};
