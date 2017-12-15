@@ -1,4 +1,14 @@
-.calendarLegendText {
+/****
+ * linked.css
+ *
+ * Name: Xander Locsin
+ * StudentID: 10722432
+ *
+ * Defines styling of elments in linked.js.
+ *
+ ****/
+
+ .calendarLegendText {
   font: 14px sans-serif;
   text-anchor: end;
 }

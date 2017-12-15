@@ -1,9 +1,12 @@
 /****
- * barchart.js
+ * linked.js
  *
- * Xander Locsin, 10722432
+ * Name: Xander Locsin
+ * StudentID: 10722432
  *
  * Script to create a calendar heatmap and a linked bar chart in linked.html
+ * The bar chart displays temperatures measured on the date that was clicked on
+ * in the calendar.
  *
  * Sources:
  *  For the barchart:
