@@ -282,18 +282,17 @@ function makeBarChart(plotDate, dataDeBilt, dataEindhoven, dataLeeuwarden, dataS
     .on("mouseout", tip.hide);
 
   // Gives the bar a rectangle for the average temperature
-  addBarForTemp(bar, d.average, tip);
-  // bar.append("rect")
-  //   .attr("y", function(d) { return y(d.average); })
-  //   .attr("x", (rectWidth / 3))
-  //   .attr("height", function(d) {return barHeight - y(d.average);})
-  //   .attr("width", (rectWidth / 3) - 1)
-  //   .style("fill", "grey")
-  //   .on("mouseover", function(d) {
-  //     tip.html("<div class='tip'>" + d.average + " \xB0C </div>")
-  //     tip.show();
-  //   })
-  //   .on("mouseout", tip.hide);
+  bar.append("rect")
+    .attr("y", function(d) { return y(d.average); })
+    .attr("x", (rectWidth / 3))
+    .attr("height", function(d) {return barHeight - y(d.average);})
+    .attr("width", (rectWidth / 3) - 1)
+    .style("fill", "grey")
+    .on("mouseover", function(d) {
+      tip.html("<div class='tip'>" + d.average + " \xB0C </div>")
+      tip.show();
+    })
+    .on("mouseout", tip.hide);
 
   // Gives the bar a rectangle for the maximum temperature
   bar.append("rect")
@@ -347,25 +346,6 @@ var week = d3.time.format("%U");
 var day = d3.time.format("%w");
 
 
-function addBarForTemp(addOn, tempType, tip) {
-  // Gives the bar a rectangle for the minimum temperature
-  addOn.append("rect")
-    // gives the rectangle a proper range and  domain
-    .attr("y", function(d) { return y(tempType); })
-
-    // Set height to the temperature data.
-    .attr("height", function(d) {return barHeight - y(tempType);})
-
-    // Set width to barWidth - 1 to create space between bars
-    .attr("width", (rectWidth / 3) - 1)
-
-    .style("fill", "steelblue")
-    .on("mouseover", function(d) {
-      tip.html("<div class='tip'>" + tempType + " \xB0C </div>")
-      tip.show();
-    })
-    .on("mouseout", tip.hide);
-};
 
 // Collects all temperatures for all stations for a single date.
 function getDateData(plotDate, dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchiphol, dataVlissingen) {
