@@ -61,7 +61,7 @@ var calendarTip = d3.tip()
  .offset([-10, 0])
  .html(function(d) {
    var tipDateString = "<strong> Date: </strong>" + formatDate(d.date) + "<br>";
-   var tipTempString = "<div><strong> Average temperature: </strong>" + String(d.average) + "</div>";
+   var tipTempString = "<strong> Average temperature: </strong>" + String(d.average) + " \xB0C";
    return tipDateString + tipTempString;
  });
 
@@ -69,8 +69,8 @@ calendarView.call(calendarTip);
 // ----------------- BAR CHART INITIALISATION ----------------------------------
 
 // Sets the margins for the bar chart and sets the width and height
-var barMargin = {top: 20, right: 30, bottom: 30, left: 20},
-  barWidth = 450 - barMargin.left - barMargin.right,
+var barMargin = {top: 20, right: 30, bottom: 40, left: 50},
+  barWidth = 500 - barMargin.left - barMargin.right,
   barHeight = 500 - barMargin.top - barMargin.bottom;
 
 // Ordinal scale for the x-axis to display station names
@@ -91,12 +91,9 @@ var yAxis = d3.svg.axis()
     .scale(y)
     .orient("left");
 
-// Tooltip.
+// Barchart tooltip.
 var tip = d3.tip()
-  .attr("class", 'd3-tip')
-  .html(function(d) {
-    return "<div class='tip'>" + d.average + " \xB0C </div>";
-  })
+  .attr("class", 'd3-tip');
 
 // Selects the chart in the html and gives it width and height including margins
 var barChart = d3.select(".barChart")
@@ -106,13 +103,6 @@ var barChart = d3.select(".barChart")
     .attr("transform", "translate(" + barMargin.left + "," + barMargin.top + ")");
 
 barChart.call(tip);
-
-// Adds a title to the top of the chart
-barChart.append("text")
-  .attr("x", barWidth / 2)
-  .attr("y", 20)
-  .style("font", "20px sans-serif")
-  .text("Sum of rainfall measured per day at Schiphol from october 30 to november 12 in 2017");
 
 // ----------------- LOAD EXTERNAL DATA ----------------------------------------
 queue()
@@ -131,7 +121,8 @@ var names = ["De Bilt", "Eindhoven", "Leeuwarden", "Schiphol", "Vlissingen"]
 function charts(error, dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchiphol, dataVlissingen) {
   if (error) throw error;
 
-  var dateData = getDateData("2017-09-01", dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchiphol, dataVlissingen);
+  var plotDate = "2017-09-01";
+  var dateData = getDateData(plotDate, dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchiphol, dataVlissingen);
 
   // Collects average temperature for the Schiphol weather station for all dates
   var calendarData = [];
@@ -144,6 +135,13 @@ function charts(error, dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchiphol, 
   });
 
   // ----------------- CALENDAR -----------------------------------------------
+
+  // Adds a title to the top of the calendar.
+  calendarView.append("text")
+    .attr("x", -20)
+    .attr("y", 20)
+    .style("font", "14px sans-serif")
+    .text("Average temperature at Schiphol from October to November");
 
   calendarView.selectAll(".month")
     .data(function(d) { return d3.time.months(new Date(2017, 9, 1), new Date(2017, 12, 1)); })
@@ -187,6 +185,14 @@ function charts(error, dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchiphol, 
       .on("mouseout", calendarTip.hide);
 
   // ----------------- BAR CHART -----------------------------------------------
+
+  // Adds a title to the top of the barchart.
+  barChart.append("text")
+    .attr("x", barWidth / 2)
+    .attr("y", 20)
+    .style("font", "14px sans-serif")
+    .text("Temperatures measured on " + formatDate(parseDate(plotDate)) + " at various weather stations");
+
   // Width of bars in the chart set to width divided by number of data entries
   var rectWidth = barWidth / 5;
 
@@ -195,7 +201,7 @@ function charts(error, dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchiphol, 
   y.domain([-5, 35]);
   // d3.extent(dateData, function(d) { return d[2]; })
 
-  var bar = barChart.selectAll(".stuff")
+  var bar = barChart.selectAll(".bar")
     .data(dateData)
     .enter().append("g")
       .attr("class", "bar")
@@ -214,7 +220,10 @@ function charts(error, dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchiphol, 
     .attr("width", (rectWidth / 3) - 1)
 
     .style("fill", "steelblue")
-    .on("mouseover", tip.show)
+    .on("mouseover", function(d) {
+      tip.html("<div class='tip'>" + d.minimum + " \xB0C </div>")
+      tip.show();
+    })
     .on("mouseout", tip.hide);
 
   // Gives the bar a rectangle for the average temperature
@@ -224,7 +233,10 @@ function charts(error, dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchiphol, 
     .attr("height", function(d) {return barHeight - y(d.average);})
     .attr("width", (rectWidth / 3) - 1)
     .style("fill", "grey")
-    .on("mouseover", tip.show)
+    .on("mouseover", function(d) {
+      tip.html("<div class='tip'>" + d.average + " \xB0C </div>")
+      tip.show();
+    })
     .on("mouseout", tip.hide);
 
   // Gives the bar a rectangle for the maximum temperature
@@ -234,7 +246,10 @@ function charts(error, dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchiphol, 
     .attr("height", function(d) {return barHeight - y(d.maximum);})
     .attr("width", (rectWidth / 3) - 1)
     .style("fill", "orange")
-    .on("mouseover", tip.show)
+    .on("mouseover", function(d) {
+      tip.html("<div class='tip'>" + d.maximum + " \xB0C </div>")
+      tip.show();
+    })
     .on("mouseout", tip.hide);
 
 
@@ -246,7 +261,7 @@ function charts(error, dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchiphol, 
     .append("text")
       .attr("class", "axisLabel")
       .attr("x", barWidth)
-      .attr("y", 30)
+      .attr("y", 35)
       .style("font", "20px sans-serif")
       .style("text-anchor", "end")
       .text("Station");
@@ -257,12 +272,15 @@ function charts(error, dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchiphol, 
       .call(yAxis)
     .append("text")
       .attr("transform", "rotate(-90)")
-      .attr("y", 6)
+      .attr("y", -40)
       .attr("dy", ".71em")
       .style("font", "20px sans-serif")
       .style("text-anchor", "end")
       .text("Temperature (\xB0C)");
 };
+
+
+
 
 
 // Collects all temperatures for all stations for a single date.
@@ -297,7 +315,7 @@ function getStationData(data, station, date){
 // formats date to easier to read string.
 function formatDate(dateVariable) {
  var day = dateVariable.getDate();
- var month = dateVariable.getMonth();
+ var month = dateVariable.getMonth() + 1;
  var year = dateVariable.getFullYear();
  return day + "-" + month + "-" + year;
 };

@@ -14,10 +14,6 @@
   text-anchor: middle;
 }
 
-.bar:hover {
-  stroke: black;
-}
-
 .d3-tip {
   font: 10px sans-serif;
   line-height: 1;
