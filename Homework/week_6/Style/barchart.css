@@ -3,6 +3,11 @@
   margin: 5px;
 }
 
+.day:hover {
+  stroke: grey;
+  stroke-width: 4;
+}
+
 .barChart text {
   fill: black;
   font: 10px sans-serif;

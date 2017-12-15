@@ -60,8 +60,8 @@ var calendarTip = d3.tip()
  .attr('class', 'd3-tip')
  .offset([-10, 0])
  .html(function(d) {
-   var tipDateString = "<strong> Date: </strong>" + formatDate(d.date) + "\n .";
-   var tipTempString = "<strong> Average temperature: </strong>" + String(d.average);
+   var tipDateString = "<strong> Date: </strong>" + formatDate(d.date) + "<br>";
+   var tipTempString = "<div><strong> Average temperature: </strong>" + String(d.average) + "</div>";
    return tipDateString + tipTempString;
  });
 
@@ -121,21 +121,17 @@ queue()
   .defer(d3.json, "../Data/Leeuwarden.json")
   .defer(d3.json, "../Data/Schiphol.json")
   .defer(d3.json, "../Data/Vlissingen.json")
-	.await(collectData);
+	.await(charts);
+
 
 var names = ["De Bilt", "Eindhoven", "Leeuwarden", "Schiphol", "Vlissingen"]
 
-// Loads in all data sets and makes the charts.
-function collectData(error, dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchiphol, dataVlissingen) {
 
-  // Collects all temperatures for all stations for a single date
-  var dateData = [];
-  plotDate = "2017-10-01";
-  dateData[0] = getStationData(error, dataDeBilt, names[0], plotDate);
-  dateData[1] = getStationData(error, dataEindhoven, names[1], plotDate);
-  dateData[2] = getStationData(error, dataLeeuwarden, names[2], plotDate);
-  dateData[3] = getStationData(error, dataSchiphol, names[3], plotDate);
-  dateData[4] = getStationData(error, dataVlissingen, names[4], plotDate);
+// Loads in all data sets and makes the charts.
+function charts(error, dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchiphol, dataVlissingen) {
+  if (error) throw error;
+
+  var dateData = getDateData("2017-09-01", dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchiphol, dataVlissingen);
 
   // Collects average temperature for the Schiphol weather station for all dates
   var calendarData = [];
@@ -186,6 +182,7 @@ function collectData(error, dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchip
       .attr("stroke", "black")
 
       // Shows and hides the calendar tooltip.
+      .on("mouseclick", function() { console.log(d3.mouse(this)); })
       .on("mouseover", calendarTip.show)
       .on("mouseout", calendarTip.hide);
 
@@ -268,17 +265,26 @@ function collectData(error, dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchip
 };
 
 
+// Collects all temperatures for all stations for a single date.
+function getDateData(plotDate, dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchiphol, dataVlissingen) {
+  console.log(plotDate);
+  var dateData = [];
+  dateData[0] = getStationData(dataDeBilt, names[0], plotDate);
+  dateData[1] = getStationData(dataEindhoven, names[1], plotDate);
+  dateData[2] = getStationData(dataLeeuwarden, names[2], plotDate);
+  dateData[3] = getStationData(dataSchiphol, names[3], plotDate);
+  dateData[4] = getStationData(dataVlissingen, names[4], plotDate);
+  return dateData;
+};
 
 // Function to collect the data for a single date from a specific station.
-function getStationData(error, data, station, date){
-  if (error) throw error;
-
+function getStationData(data, station, date){
   var stationData = {};
   stationData["station"] = station;
 
   // Collect data for a date.
   data.forEach(function(d) {
-    if (d.date == "2017-10-01") {
+    if (d.date == date) {
       stationData.minimum = d.minimum;
       stationData.average = d.average;
       stationData.maximum = d.maximum;
