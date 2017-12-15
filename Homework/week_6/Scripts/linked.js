@@ -25,19 +25,21 @@ var calendarMargin = {top: 20, right: 30, bottom: 30, left: 30},
 
 // Selects the chart in the html and gives it width and height including margins
 var calendarView = d3.select(".calendarView")
-  .attr("width", calendarWidth + calendarMargin.left + calendarMargin.right)
-  .attr("height", calendarHeight + calendarMargin.top + calendarMargin.bottom)
+    .attr("width", calendarWidth + calendarMargin.left + calendarMargin.right)
+    .attr("height", calendarHeight + calendarMargin.top + calendarMargin.bottom)
   .append("g")
     .attr("transform", "translate(" + calendarMargin.left + "," + calendarMargin.top + ")");
 
 
 var month = ['September','October','November'];
 
+var names = ["De Bilt", "Eindhoven", "Leeuwarden", "Schiphol", "Vlissingen"]
+
 // Adds a legend to show the month names.
 var calendarLegend = calendarView.selectAll(".legend")
   .data(month)
   .enter().append("g")
-  .attr("transform", function(d, i) { return "translate( 0," + (100 + i * 150) + ")"; });
+    .attr("transform", function(d, i) { return "translate( 0," + (100 + i * 150) + ")"; });
 
 calendarLegend.append("text")
   .attr("class", "calendarLegendText")
@@ -60,7 +62,7 @@ calendarView.call(calendarTip);
 // ----------------- BAR CHART INITIALISATION ----------------------------------
 
 // Sets the margins for the bar chart and sets the width and height
-var barMargin = {top: 20, right: 30, bottom: 40, left: 50},
+var barMargin = {top: 50, right: 0, bottom: 150, left: 50},
   barWidth = 500 - barMargin.left - barMargin.right,
   barHeight = 500 - barMargin.top - barMargin.bottom;
 
@@ -79,8 +81,8 @@ var xAxis = d3.svg.axis()
 
 // Defines the y-axis. Placed on the left.
 var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left");
+  .scale(y)
+  .orient("left");
 
 // Barchart tooltip.
 var tip = d3.tip()
@@ -95,6 +97,44 @@ var barChart = d3.select(".barChart")
 
 barChart.call(tip);
 
+var barLegendColours = ["orange", "grey", "steelblue"]
+var barLegendNames = ["Maximum temperature", "Average temperature", "Minimum temperature" ]
+
+// Adds a canvas for the Legend to the chart
+var legendX = barWidth / 4;
+var legendY = barHeight + 30;
+var barLegend = barChart.append("g");
+barLegend.append("rect")
+    .attr("id", "barLegend")
+    .attr("x", legendX)
+    .attr("y", legendY)
+    .attr("width", 160)
+    .attr("height", 110);
+
+// Adds coloured boxes to the legend
+for (var i = 0; i < 3; i++) {
+  barLegend.append("rect")
+    .attr("class", "barLegendBox")
+    .attr("x", legendX + 10)
+    .attr("y", function () { yVal = legendY + 10 + 30 * i;
+      return yVal;})
+    .attr("width", 20)
+    .attr("height", 20)
+    .style("fill", barLegendColours[i]);
+
+  // Adds text to the legend
+  barLegend.append("text")
+      .attr("class", "barLegendText")
+      .attr("x", legendX + 40)
+      .attr("y", function () { yVal = legendY + 20 + 30 * i;
+        return yVal;})
+      .style("text-anchor", "start")
+      .text( barLegendNames[i]);
+};
+
+
+
+
 // ----------------- LOAD EXTERNAL DATA ----------------------------------------
 queue()
   .defer(d3.json, "../Data/DeBilt.json")
@@ -103,8 +143,6 @@ queue()
   .defer(d3.json, "../Data/Schiphol.json")
   .defer(d3.json, "../Data/Vlissingen.json")
 	.await(charts);
-
-var names = ["De Bilt", "Eindhoven", "Leeuwarden", "Schiphol", "Vlissingen"]
 
 // Loads in all data sets and makes the charts.
 function charts(error, dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchiphol, dataVlissingen) {
@@ -121,7 +159,7 @@ function makeCalendarView(dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchipho
 
   // Collects average temperature for the Schiphol weather station for all dates
   var calendarData = [];
-  
+
   // Collect data for a date.
   dataSchiphol.forEach(function(d, i) {
     var dateAverage = {};
@@ -132,15 +170,15 @@ function makeCalendarView(dataDeBilt, dataEindhoven, dataLeeuwarden, dataSchipho
 
   // Adds a title to the top of the calendar.
   calendarView.append("text")
-  .attr("class", "title")
-  .attr("x", calendarWidth / 2)
-  .attr("y", 20)
-  .text("Average temperature at Schiphol from October to November");
+    .attr("class", "title")
+    .attr("x", calendarWidth / 2)
+    .attr("y", 20)
+    .text("Average temperature at Schiphol from October to November");
 
   // Colour range
   var colour = d3.scale.linear()
-  .range(["white", "blue"])
-  .domain(d3.extent(calendarData, function(d) { return d.average; }));
+    .range(["white", "blue"])
+    .domain(d3.extent(calendarData, function(d) { return d.average; }));
 
   var cellSize = 25;
   var monthOffset = -cellSize - 2;
@@ -196,16 +234,24 @@ function makeBarChart(plotDate, dataDeBilt, dataEindhoven, dataLeeuwarden, dataS
   barChart.append("text")
     .attr("class", "title")
     .attr("x", barWidth / 2)
-    .attr("y", 20)
+    .attr("y", -10)
     .text("Temperatures measured on " + plotDate + " at various weather stations");
 
   // Width of bars in the chart set to width divided by number of data entries
   var rectWidth = barWidth / 5;
 
-  // Defines domain based on the data
+
+  // Gathers the lowest of the minimum temperatures and the highest of the max.
+  var minTemp = d3.min(dateData, function(d) { return d.minimum; });
+  var maxTemp = d3.max(dateData, function(d) { return d.maximum; });
+
+  // Temperature axis margin to prevent large difference in bar size.
+  var barSizeMargin = 5;
+
+  // Defines domain based on the data.
   x.domain(names);
-  y.domain([-5, 35]);
-  // d3.extent(dateData, function(d) { return d[2]; })
+  y.domain([minTemp - barSizeMargin, maxTemp + barSizeMargin]);
+
 
   var bar = barChart.selectAll(".bar")
     .data(dateData)
