@@ -8,7 +8,15 @@
  *
  ****/
 
- .calendarLegendText {
+#pageTitle {
+  font: 26px sans-serif;
+}
+
+.htmlText {
+  font: 14px sans-serif;
+}
+
+.calendarLegendText {
   font: 14px sans-serif;
   text-anchor: end;
 }
