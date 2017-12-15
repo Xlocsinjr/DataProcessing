@@ -8,7 +8,7 @@
  * The bar chart displays temperatures measured on the date that was clicked on
  * in the calendar.
  *
- * Sources:
+ * References:
  *  For the barchart:
  *    https://bost.ocks.org/mike/bar/3/
  *  For the tooltips:
