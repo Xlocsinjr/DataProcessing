@@ -249,7 +249,7 @@ function makeBarChart(plotDate, dataDeBilt, dataEindhoven, dataLeeuwarden, dataS
   var maxTemp = d3.max(dateData, function(d) { return d.maximum; });
 
   // Temperature axis margin to prevent large difference in bar size.
-  var barSizeMargin = 5;
+  var barSizeMargin = 6;
 
   // Defines domain based on the data.
   x.domain(names);
@@ -266,13 +266,14 @@ function makeBarChart(plotDate, dataDeBilt, dataEindhoven, dataLeeuwarden, dataS
   // Gives the bar a rectangle for the minimum temperature
   bar.append("rect")
     // gives the rectangle a proper range and  domain
+    .attr("x", 4)
     .attr("y", function(d) { return y(d.minimum); })
 
     // Set height to the temperature data.
     .attr("height", function(d) {return barHeight - y(d.minimum);})
 
-    // Set width to barWidth - 1 to create space between bars
-    .attr("width", (rectWidth / 3) - 1)
+    // Set width to barWidth - 5 to create space between bars
+    .attr("width", (rectWidth / 3) - 5)
 
     .style("fill", "steelblue")
     .on("mouseover", function(d) {
@@ -283,10 +284,10 @@ function makeBarChart(plotDate, dataDeBilt, dataEindhoven, dataLeeuwarden, dataS
 
   // Gives the bar a rectangle for the average temperature
   bar.append("rect")
-    .attr("y", function(d) { return y(d.average); })
     .attr("x", (rectWidth / 3))
+    .attr("y", function(d) { return y(d.average); })
     .attr("height", function(d) {return barHeight - y(d.average);})
-    .attr("width", (rectWidth / 3) - 1)
+    .attr("width", (rectWidth / 3) - 5)
     .style("fill", "grey")
     .on("mouseover", function(d) {
       tip.html("<div class='tip'>" + d.average + " \xB0C </div>")
@@ -296,10 +297,10 @@ function makeBarChart(plotDate, dataDeBilt, dataEindhoven, dataLeeuwarden, dataS
 
   // Gives the bar a rectangle for the maximum temperature
   bar.append("rect")
+    .attr("x", ((rectWidth / 3) * 2) - 4)
     .attr("y", function(d) { return y(d.maximum); })
-    .attr("x", (rectWidth / 3) * 2)
     .attr("height", function(d) {return barHeight - y(d.maximum);})
-    .attr("width", (rectWidth / 3) - 1)
+    .attr("width", (rectWidth / 3) - 5)
     .style("fill", "orange")
     .on("mouseover", function(d) {
       tip.html("<div class='tip'>" + d.maximum + " \xB0C </div>")
@@ -344,7 +345,6 @@ var week = d3.time.format("%U");
 
 // Get weekday as a decimal number from a js date.
 var day = d3.time.format("%w");
-
 
 
 // Collects all temperatures for all stations for a single date.
