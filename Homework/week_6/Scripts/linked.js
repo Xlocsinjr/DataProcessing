@@ -241,7 +241,7 @@ function makeBarChart(plotDate, dataDeBilt, dataEindhoven, dataLeeuwarden, dataS
     .text("Temperatures measured on " + plotDate + " at various weather stations");
 
   // Width of bars in the chart set to width divided by number of data entries
-  var rectWidth = barWidth / 5;
+  var rectGroupWidth = barWidth / 5;
 
 
   // Gathers the lowest of the minimum temperatures and the highest of the max.
@@ -249,7 +249,7 @@ function makeBarChart(plotDate, dataDeBilt, dataEindhoven, dataLeeuwarden, dataS
   var maxTemp = d3.max(dateData, function(d) { return d.maximum; });
 
   // Temperature axis margin to prevent large difference in bar size.
-  var barSizeMargin = 6;
+  var barSizeMargin = (maxTemp - minTemp) / 3;
 
   // Defines domain based on the data.
   x.domain(names);
@@ -260,7 +260,7 @@ function makeBarChart(plotDate, dataDeBilt, dataEindhoven, dataLeeuwarden, dataS
     .data(dateData)
     .enter().append("g")
       .attr("class", "bar")
-      .attr("transform", function(d, i) { return "translate(" + i * rectWidth + ",0)"; });
+      .attr("transform", function(d, i) { return "translate(" + i * rectGroupWidth + ",0)"; });
 
 
   // Gives the bar a rectangle for the minimum temperature
@@ -273,7 +273,7 @@ function makeBarChart(plotDate, dataDeBilt, dataEindhoven, dataLeeuwarden, dataS
     .attr("height", function(d) {return barHeight - y(d.minimum);})
 
     // Set width to barWidth - 5 to create space between bars
-    .attr("width", (rectWidth / 3) - 5)
+    .attr("width", (rectGroupWidth / 3) - 5)
 
     .style("fill", "steelblue")
     .on("mouseover", function(d) {
@@ -284,10 +284,10 @@ function makeBarChart(plotDate, dataDeBilt, dataEindhoven, dataLeeuwarden, dataS
 
   // Gives the bar a rectangle for the average temperature
   bar.append("rect")
-    .attr("x", (rectWidth / 3))
+    .attr("x", (rectGroupWidth / 3))
     .attr("y", function(d) { return y(d.average); })
     .attr("height", function(d) {return barHeight - y(d.average);})
-    .attr("width", (rectWidth / 3) - 5)
+    .attr("width", (rectGroupWidth / 3) - 5)
     .style("fill", "grey")
     .on("mouseover", function(d) {
       tip.html("<div class='tip'>" + d.average + " \xB0C </div>")
@@ -297,10 +297,10 @@ function makeBarChart(plotDate, dataDeBilt, dataEindhoven, dataLeeuwarden, dataS
 
   // Gives the bar a rectangle for the maximum temperature
   bar.append("rect")
-    .attr("x", ((rectWidth / 3) * 2) - 4)
+    .attr("x", ((rectGroupWidth / 3) * 2) - 4)
     .attr("y", function(d) { return y(d.maximum); })
     .attr("height", function(d) {return barHeight - y(d.maximum);})
-    .attr("width", (rectWidth / 3) - 5)
+    .attr("width", (rectGroupWidth / 3) - 5)
     .style("fill", "orange")
     .on("mouseover", function(d) {
       tip.html("<div class='tip'>" + d.maximum + " \xB0C </div>")
