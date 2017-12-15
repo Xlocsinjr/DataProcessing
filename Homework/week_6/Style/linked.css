@@ -1,6 +1,6 @@
-.calendarView {
-  background: #fff;
-  margin: 5px;
+.calendarLegendText {
+  font: 14px sans-serif;
+  text-anchor: end;
 }
 
 .day:hover {
@@ -19,7 +19,7 @@
   line-height: 1;
   padding: 5px;
   background: rgba(0, 0, 0, 0.8);
-  color: #fff;
+  color: white;
 }
 
 .axis text {
